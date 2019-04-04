@@ -1,0 +1,431 @@
+/*
+ * NOTES ABOUT THINGS I LEARN
+ */
+1. ScrollView - Scrollable Text with LinearLayout can have multiple scrolling texts
+2. Explicit Intent - 
+	new Intent(MainActivity.this, SecondActivity.class); 
+	startActivity(intent); startActivityForResult(intent, TEXT_REQUEST) public void onActivityResult
+	public static final String EXTRA_REPLY = "com.example.android.twoactivities.extra.MESSAGE"
+3. Implicit Intent
+	new Intent(Intent.ACTION_VIEW, webpageURI)
+	if (intent.resolveActivity(getPackageManager()) != null) {
+       startActivity(intent);
+    else Log.d("Can't handle this intent");
+4. ShareCompat.IntentBuilder
+           .from(this)
+           .setType(mimeType)
+           .setChooserTitle("Share this text with: ")
+           .setText(txt)
+           .startChooser();
+5. public void onSaveInstanceState(Bundle outState) - save state when rotating a device
+6. Toast Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show(); Simple popup msg
+7. RadioButtons and Spinners for input
+8. Toolbar class for App Bar
+9. Hold on text view to edit/delete/share ContextMenu popout
+	- registerForContextMenu(view);
+	- public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+	- getMenuInflater().inflater.inflate(R.menu.menu_context, menu)
+10. TabLayout + Toolbar + ViewPager + Fragments gives nice way to scroll through fake pages that are fragments
+11. RecyclerView best way to hold lists
+12. To create button pressed https://stackoverflow.com/questions/3882064/how-to-change-color-of-button-in-android-when-clicked
+onClick(View view) {view.setBackground(getResources().getDrawable(R.drawable.selectorXML))}
+13. ProgressBar. Very easy to set up. progressBar.getProgress(); progressBar.setProgress();
+14. Navigation Drawer from the left opens up to the right
+15. Bottom navigation bar
+16. Snackbar is similar to Toast except it opens up with a small black border from the bottom.
+17. ArrayAdapter is useful to put ArrayList into it so ListView can retrieve data from ArrayAdapter that prepares TextViews to send to ListView
+	Also I can extend ArrayAdapter class to make list more complicated and have multiple values stored, for instance User that has Name and Surname can be an object, create ArrayList<Users> store it in ArrayAdapter and then set ListView adapter's to usersAdapter. Also override getView to create multiple views in one list.
+18. ImageIcon setVisibility(View.GONE) automatically deletes the imageview and creates proper aligning with the XML objects
+19. MediaPlayer.create(this, R.raw.music); player.start(); player.stop(); player.getDuration(); player.getCurrentPosition(); ALl of this can be used to create a MediaPlayer and combine it with a seekbar
+20. SeekBar. A MP3-like progress bar that can be skipped et, cetera. seekbar.setProgress(int) ant that is it, just need to have a updated variable
+21. Handler h = new Handler(); h.postDelayed(loopedFunction, miliseconds); loopedFunction Runnable will be updated every time x miliseconds passes, good for async tasks
+22. ListView setOnItemClickListener provides the item person clicked and gives int i position which can later be used to retrieve specific object from ArrayList
+23. Async callbacks retrieves action to the synchronous when something occurs, for example MediaPlayer.setOnCompletionListener activates when song ends
+24. <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/category_numbers">
+        <TextView
+            android:id="@+id/numbers"
+            style="@style/CategoryStyle"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/category_numbers" />
+    </FrameLayout>
+    Allows to have a view with its own background and whenever it is clicked, it will show circle ripple effect that it was clicked. Crazy simple
+25. To make ListView items responsive you can either create <View> and set background or if layout is ListView add this android:drawSelectorOnTop="true"
+26. ViewPager + PagerAdapter + TabLayout gives fragmented views where you can swipe left and right to switch fragments. 
+27. import com.example.sqlitecourse.data.PetContract.PetEntry;
+	- PetContract has subclass PetEntry which holds many constants and in order to avoid writing PetContract.PetEntry.CONSTANT1 importing like this fixes the issue
+28. ContentProvider - Manages access to a structured set of data.
+	- Good abstraction layer between data source & UI code (can add data validation, can modify how data is stored and UI code is not unaffected)
+	- Share data with other apps
+	- Works well with other Android Framework classes
+	- Centralizes accesing and editing of the data via content provider. Activity -> ContentProvider -> BaseDbHelper of SQLiteDB (query, insert, update, delete methods)
+	- WORKS the same as my SEP3 project. BaseActivity -> Content Resolver -> Content Provider -> SQLiteDB. 3 Tier architecture. ACtivity acts as front end, sends request to content resolver aka business logic which then consumes local web services from Content Provider which acts like Persistence exposing web services and ContentProvider manages all the connection to the database.
+ContentURI - A content URI is a URI that identifies data in a provider
+	- Can point to a part of a database (single row or combination of tables)
+	- Can point to a file (text, photo, other media file)
+URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try to handle unexpected requests and also determines which database table we need to talk to.
+	- content://com.example.android.pets/pets
+	- content://com.example.android.pets/pets/# ; # - is a wildcard character, where any integer can be replaced to this wildcard
+	- content://com.example.android.pets/pets/* ; * - is a wildcard character, where any string can be replaced to this wildcard
+29. Room persistence library
+	- Basic Sample App for Room implementation https://github.com/googlesamples/android-architecture-components/tree/master/BasicSample
+	- @Query("SELECT * FROM user WHERE first_name LIKE :first AND "
+           + "last_name LIKE :last LIMIT 1")
+		User findByName(String first, String last);
+		Find one entity by name in Room
+	- Consider using DatabaseHelper which stores DAO references, it can give more structure to the project
+	- @Embedded tag helps to include POJO within a pojo, for example I have user which has Address class inside of him, annotate Address with @Embedded
+	AND also @Embedded(prefix = "word1_") will help to avoid duplicate column names and fix the error
+HTTP Networking
+	- To display time in an integer variable, use Unix Timestamp, easy to send it through JSON
+	- By defining XML shapes a flexible asset is created that will scale across all devices
+	- public void completePurchase() throws InvalidPurchaseException this notifies the compiler that programmer MUST handle the exception of this method by using try/catch block
+	- Always handle networking requests in a different thread/AsyncTask to never block the on-going thread's procedure
+	- public class MyAsyncTask extends AsyncTask<Params, Progress, Result>
+		1. Result doInBackground() {publish Progress(73); return Result;} method that is executed in the background, this is where you request HTTP
+		2. onProgressUpdate(Progress p) this method can be used to update UI with the new values to inform the user about the current progress of AsyncTask
+		3. void onPostExecute(Result result) to communicate between main thread and background thread need to override this method, because it runs in main thread. This method will be called when doInBackground() finishes.
+	- When waiting for HTTP Request implement a ProgressBar to display how long it will take to download API data
+	- Check network connectivity and if it does not exist, show it for the user
+Firebase SATURDAY SUNDAY MONDAY
+	- To add firebase to build.gradle I also need to add this in repositories {}: maven { url "https://maven.google.com" }
+	- Firebase Realtime database - sync app data in realtime. Stored in JSON. Arrays are not recommended, only JSON dictionaries
+	- FirebaseDatabase class is an entry point to the database
+	- DatabaseReference references specific part of the database
+	- defined String in DatabaseReference if doesnt exists, creates a new JSOn place to look at for the user
+	- When using .push to the database a unique ID (push id is generated)
+	- ChildEventListener tracks if there have been any changes in database and is attached to databasereference
+	- FirebaseUI opensource library. It handles the UI flow for authenticating with Firebase, implements best practices (Fb, twitter, google, email, github)
+	- Clearing out adapter when you log out is important
+	- FirebaseAuth & FireBaseAuthAuthStateListener helps to build sign in sign out. Attach, detach them in onResume, onPause
+	- FirebaseUser has displayName of his account from Gmail, facebook, twitter et cetera. 
+	- AuthUI.createSignInIntentBuilder creates a whole new activity just for logging in
+	- AuthUI.getInstance().signout(Context context) signs out the user without worries
+	- FirebaseApp.initialize has to happen in Application class. Need to write Name for application in manifest, create a class extending application and in overriden onCreate method initialize FirebaseApp OOOOR downgrade google.play.services to 4.0.0
+	- Firebase needs an empty constructor in a model class!
+32. MVVM: (Fragment (View) -> ViewModel -> Repository -> Firebase -> Room Database) Two-way communication
+	- Repositories are made as a singleton and I can initialize them in MainActivity to send ApplicationContext if needed, BUT it is better to use ViewModelProviders.Factory to initialize Repository in ViewModel
+	- It is good to have InjectorUtils.java file where I can initialize repository, database, networkSource, firebase et cetera
+	- When using MVVM + Room + Retrofit + Repository, to sync web services with Room, do this: Retrofit gets web api request done, onResponse create new Runnable there and add web service data to Room
+	- MVVM packaging: application (views, activities, viewmodels) + business (repository, daos, database, networking, et cetera) + Utils (InjectorUtils & AppExecutors)
+	- Database should have a DatabaseHelper class which contains all DAO interfaces
+32. ViewModel
+	- ViewModel vs. onSaveInstanceState. Store all data in ViewModel while store important and short data in onSaveInstance for example ViewModel has all attributes and onSaveInstanceState has userId
+	- ViewModelProviders.of when first called in onCreate initialized ViewModel, but when activity destroys itself and calls onCreate again, it calls pre-existing ViewModel
+	- The constructor that is automatically called by ViewModelProvider is the default one - it takes no arguments. If you want to create a different constructor for a view model, you'll need to make a view model provider factory. 
+	- ViewModelProvider.Factory overrides create method which is invoked when ViewModel is created when used ViewModelProviders.of(this).get(class.class), by using factory you can create custom constructors for ViewModel classes and initialize repository in a more efficient way, for example using InjectorUtils
+	- ViewModel can also be used to share data between fragments easily
+33. LiveData
+	- LiveData is an observable data holder. This allows view to observe LiveData without creating rigid dependency paths
+	- WIth LiveData I do not need to requery AT ALL, observers handles this
+	- If I want to edit stored values inside LiveData I should use MutableLiveData setValue(T) - sets value and notifies attached observers, must be ran in main thread, if I want to run in a background thread, run postValue(T): example  
+	liveData.postValue("a");
+	liveData.setValue("b"); 
+	here first setValue would be executed and value would be be, but then postValue executes and overrides value 'b' with 'a'
+	- Note: You must call the setValue(T) method to update the LiveData object from the main thread. If the code is executed in a worker thread, you can use   the postValue(T) method instead to update the LiveData object.
+	 Note: LiveData and it's subclasses contain both a setValue() and a postValue() method. The difference is that setValue() must be called from the main thread. postValue() is for when the call occurs off of the main thread. You'll see why you use postValue() next.
+	 - When attaching observers to LiveData, ensure that LiveData instance isn't changing, because then you need to attach a new observer and that would be bad practice
+	 - When using MVVM with LiveData, try to have MutableLiveData as low as I can in the tiers, for example MutableLiveData should live in Retrofit data source or Room data source
+33. Repository pattern in MVVM
+	- Repository class SHOULD have MutableLiveData but when giving external access to other classes, ONLY provide LiveData 
+	- In Repository when initializing data, I should make a boolean value to check if data was initialized in this app's lifetime
+	- Only Repository should have MutableLiveData as it is single source of truth, and expose only LiveData to view it, ViewModel can have MutableLiveData if UI is updating the LiveData
+	- the repository should be the single source of truth for all data operations
+	- By using AppExecutors I can create smooth concurrency for repository to evaluate when to fetch data from API or when to retrieve it from Room
+33. SharedPreferences are good when you want to save minimum amount of data
+34. Dependency injection is the idea that you should make required components available for a class, instead of creating them within the class itself. An example of how the Sunshine code does this is that instead of constructing the WeatherNetworkDatasource within the SunshineRepository, the WeatherNetworkDatasource is created via InjectorUtilis and passed into the SunshineRepository constructor. One of the benefits of this is that components are easier to replace when you're testing.
+35. InitializeApplication extends Application. Executes any code before activities are onCreated
+	- https://medium.com/@balakrishnan.750/android-application-class-a8a1d64c82d1
+	- https://github.com/codepath/android_guides/wiki/Understanding-the-Android-Application-Class
+	- https://stackoverflow.com/questions/45903111/android-extending-application-class-why-do-we-need-to-implement-singleton-patt
+36. Chronometer useful in-built class to display chronometer
+37. Retrofit2
+	- Retrofit allows to serialize/deserialize JSON by using its own modified GSON very easily
+	- Retrofit requests has to run on a parallel thread to UI thread
+	- Model has to match the JSON namings, use this: http://www.jsonschema2pojo.org/ as a reference 
+	- All HTTP requests are written in interface e.g. GithubService.class 
+	- It can be useful to initialize Retrofit builder inside the interface so the code is less clunky
+	- Example of simple interface is in code snippets
+	- To invoke request, use call.enqueue and deserialized object is in onResponse(... Response<List<Contributor> response) response.body();
+	- always use response.isSuccessful() before doing any action on onResponse method
+	- To use LiveData with it, use MutableLiveData, when onResponse is successfull, do mutableLiveData.postValue(response.body());
+38. FrameLayout's layout_gravity="bottom|end"
+
+/*
+ * LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS
+ */
+
+ <-----------USER INTERFACE----------->
+
+- Constraint Layout https://codelabs.developers.google.com/codelabs/constraint-layout/index.html#0
+- More on Constraint Layout https://developer.android.com/training/constraint-layout/
+- Layout performances https://android-developers.googleblog.com/2017/08/understanding-performance-benefits-of.html
+- ConstraintLayout Performance https://www.reddit.com/r/androiddev/comments/a1ijuz/constraint_layout_performance/
+- https://developer.android.com/guide/topics/ui/
+- AppBar Tutorial https://developer.android.com/training/appbar/
+- Style and Themes https://developer.android.com/guide/topics/ui/look-and-feel/themes
++ Advanced Toolbar usage https://guides.codepath.com/android/using-the-app-toolbar
+- Good Intent Tutorial https://www.vogella.com/tutorials/AndroidIntent/article.html#usingintents_call
+- Fragments
+	http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+	http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#Lifecycle
+	http://developer.android.com/training/basics/fragments/index.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+	- I could always use activities and inside them place fragment so whenever I want to implement swipeable UI I can easily do so
+- Navigation NEW ANDROID THING
+	- https://developer.android.com/guide/navigation
+	- MARCH 13th TUTORIAL BUT IN KOTLIN :^((( https://codelabs.developers.google.com/codelabs/android-navigation/index.html?index=..%2F..index#0
+	- https://proandroiddev.com/android-jetpack-navigation-to-the-rescue-fe588271d36
+	- https://medium.com/deemaze-software/android-jetpack-navigation-architecture-component-b603c9a8100c
+- TabLayout Tutorial https://guides.codepath.com/android/google-play-style-tabs-using-tablayout#sliding-tabs-layout
+- ViewPager https://blog.usejournal.com/early-introduction-of-viewpager2-ff38c60d2169
+- Intent.putExtra
+- Drawable resource file XML <shape> XML class in specific to create small visuals 
+	https://guides.codepath.com/android/Drawables
+	https://android.jlelse.eu/android-shape-drawables-tutorial-17fbece6fef5
+- SharedViewModel https://medium.com/mindorks/how-to-communicate-between-fragments-and-activity-using-viewmodel-ca733233a51c
+- MATERIAL DESIGN
+	- https://material.io/
+	- https://material.io/design/introduction/#principles
+	- https://material.io/collections/developer-tutorials/#
+
+- Animations
+	- https://medium.com/@andkulikov/animate-all-the-things-transitions-in-android-914af5477d50
+- Flexbox layout https://blog.mindorks.com/play-with-flexbox-layout-for-android
+- Charts https://www.mobindustry.net/how-to-quickly-implement-beautiful-charts-in-your-android-app/
+- RecyclerView https://android.jlelse.eu/get-expandable-recyclerview-in-a-simple-way-8946046b4573
+	+ https://hackernoon.com/android-recyclerview-onitemclicklistener-getadapterposition-a-better-way-3c789baab4db
+	- https://medium.com/@zackcosborn/step-by-step-recyclerview-swipe-to-delete-and-undo-7bbae1fce27e
+	- https://medium.com/@slarsoncreative/creating-a-multiple-view-type-recyclerview-using-the-visitor-pattern-1184d8732167
+- Rounded avatars/images https://evel.io/2013/07/21/rounded-avatars-in-android/
+- FrameLayout
++ Bottom navigation view https://medium.com/@oluwabukunmi.aluko/bottom-navigation-view-with-fragments-a074bfd08711
+- Compound Views (Custom View Components probably)
+	- https://github.com/frogermcs/InstaMaterial/blob/5a6d0939f9335bf8845c979d22af71665716a20c/app/src/main/java/io/github/froger/instamaterial/ui/view/FeedContextMenu.java#L16-L29
+	- https://medium.com/square-corner-blog/advocating-against-android-fragments-81fd0b462c97
+- Text Appearance https://medium.com/androiddevelopers/whats-your-text-s-appearance-f3a1729192d
+
+<-------------------THREADING------------>
+
+- Processes, Threads and how to keep a responsive app4
+	- https://www.youtube.com/watch?v=qk5F6Bxqhr4 Part 1 to 6
+	- https://developer.android.com/guide/components/processes-and-threads
+	- https://developer.android.com/guide/components/processes-and-threads.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+	- https://developer.android.com/training/articles/perf-anr.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+	- https://www.youtube.com/watch?v=qk5F6Bxqhr4&index=1&list=PLWz5rJ2EKKc9CBxr3BVjPTPoDPLdPIFCE
+	- https://www.vogella.com/tutorials/AndroidBackgroundProcessing/article.html
+	- https://academy.realm.io/posts/android-threading-background-tasks/
+	- https://academy.realm.io/posts/360andev-stacy-devino-async-tasks-threads-pools-executors-android/
+	- Synchronized LOCK
+	- Worker threads
+	- Executor
+	- Handler
+	- runOnuiThread
+	- AppExecutor https://github.com/googlesamples/android-architecture-components/blob/master/PersistenceMigrationsSample/app/src/main/java/com/example/android/persistence/migrations/AppExecutors.java
+	- Coroutines
+
+<---------------------FIREBASE--------------->
+
+- Firebase RecyclerView Adapter https://medium.com/android-grid/how-to-use-firebaserecycleradpater-with-latest-firebase-dependencies-in-android-aff7a33adb8b
+- Firebase Realtime database
+- Firebase MVVM
+	- Firebase & MVVM https://medium.com/globallogic-latinoamerica-mobile/viewmodel-firebase-database-3cc708044b5d
+	- https://proandroiddev.com/firebase-android-series-firestore-17e8951c574e
+- Firebase LiveData https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
+<------------------ARCHITECTURE--------------->
+
+- MODERN APP ARCHITECTURE USING MVVM AND ARCHITECTURE COMPONENTS
+	- Android architecture 7 Parts http://www.digigene.com/architecture/android-architecture-part1/
+	+ App Architecture https://developer.android.com/jetpack/docs/guide
+	- https://proandroiddev.com/the-missing-google-sample-of-android-architecture-components-guide-c7d6e7306b8f
+	- MVVM Pattern https://proandroiddev.com/mvvm-architecture-viewmodel-and-livedata-part-1-604f50cda1
+	- Clean Architecture https://medium.com/@dmilicic/a-detailed-guide-on-developing-android-apps-using-the-clean-architecture-pattern-d38d71e94029
+	- 5 Part Architecture tutorial to build an app, sadly in Kotlin https://www.baruckis.com/android/kriptofolio-app-series/
+	- Another good readup about architecture https://medium.com/androiddevelopers/google-i-o-2018-app-architecture-and-testing-f546e37fc7eb
+	- MVP Pattern https://android.jlelse.eu/architectural-guidelines-to-follow-for-mvp-pattern-in-android-2374848a0157
+	- Single Source of Truth https://medium.com/@develop.rahimi95/single-source-of-truth-with-mvvm-retrofit2-livedata-rxjava-and-room-in-repository-pattern-f5304f39175
+	- Long text but maybe worth it https://www.wintellect.com/model-view-viewmodel-mvvm-explained/
+	- Combining everything in one for efficient MVVM https://medium.com/@saquib3705/consuming-rest-api-using-retrofit-library-with-the-help-of-mvvm-dagger-livedata-and-rxjava2-in-67aebefe031d
+	- MVVM Secrets https://android.jlelse.eu/exciting-secrets-about-mvvm-that-nobody-tells-you-a95548ea684b
+	- https://android.jlelse.eu/android-mvvm-with-dagger-2-retrofit-rxjava-architecture-components-6f5da1a75135
+	- https://android.jlelse.eu/architecture-components-mvp-mvvm-237eaa831096
+	- https://proandroiddev.com/our-way-to-mvvmi-and-mistakes-we-made-when-implementing-mvvm-5f5448b5ad50
+
+LIVE DATA
+	- https://proandroiddev.com/why-should-you-wrap-livedata-with-your-own-abstraction-e738d94cc745
+	- https://medium.com/@Strk7/the-gentle-guide-to-livedata-2833eee97bd5
+
+ARCHITECTURE COMPONENTS
+	- Data binding support
+	- WorkManager
+	- Paging
+	- Jetpack https://developer.android.com/jetpack/#architecture-components
+
+<--------------------THEORY--------------->
+
+SOFTWARE ENGINEERING THEORY
++ https://en.wikipedia.org/wiki/Observer_pattern
+- https://en.wikipedia.org/wiki/Factory_method_pattern
+- https://en.wikipedia.org/wiki/Separation_of_concerns
+- https://en.wikipedia.org/wiki/Data_access_object
+- https://en.wikipedia.org/wiki/Dependency_injection 
+- SOLID Principles https://scotch.io/bar-talk/s-o-l-i-d-the-first-five-principles-of-object-oriented-design#toc-single-responsibility-principle
+- DRY code
+- WET code
+- https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel
+- https://en.wikipedia.org/wiki/Plain_old_Java_object
+- https://en.wikipedia.org/wiki/Race_condition
+- https://hackernoon.com/top-10-system-design-interview-questions-for-software-engineers-8561290f0444
+- Computer Science problems
+- How to start contributing to open source projects
+- https://en.wikipedia.org/wiki/Service_locator_pattern
+- Builder Pattern
+	- https://www.thedroidsonroids.com/blog/design-patterns-in-android-builder
+- https://en.wikipedia.org/wiki/5_Whys
+- https://codeburst.io/software-architecture-the-difference-between-architecture-and-design-7936abdd5830
+
+<------------------JAVA STUFF TO LEARN----------------->
+
+- Java Lambda Expression
+- Java annotations
+- Map, HashMap, Tree
+- Java Volatile keyword
+- Callback class
+- Java Object Relationships Inheritance https://youtu.be/p5aLAcMIK7M?list=LLpkh0DQ4SbSREpdiYK2Cx7Q
+
+<-------------------ANDROID SDK STUFF----------------->
+
+- Services
+- IntentServices https://developer.android.com/reference/android/app/IntentService.html
+- Content Providers
+- Broadcast Receivers
+
+<------------------WEB SERVICES/REST API-------------->
+
+- Learn RetroFit to handle REST API
+	+ https://zeroturnaround.com/rebellabs/getting-started-with-retrofit-2/
+	- 2019 tutorial with a lot of stuff to learn https://www.vogella.com/tutorials/Retrofit/article.html 
+	- Retrofit Error Response combined with MVVM and Repository, good source code to follow https://medium.com/@sriramr083/error-handling-in-retrofit2-in-mvvm-repository-pattern-a9c13c8f3995
+	- https://guides.codepath.com/android/consuming-apis-with-retrofit
+	- https://futurestud.io/tutorials/retrofit-2-creating-a-sustainable-android-client
+- Android RESTful https://android.jlelse.eu/rest-api-on-android-made-simple-or-how-i-learned-to-stop-worrying-and-love-the-rxjava-b3c2c949cad4
+
+<----------------RxJava AND Reactive Programming---------------------->
+
+- RxJava
+	- https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+	- Learn about Observable class
+
+<----------------DEPENDENCY INJECTION---------------------->
+
+- What is injector in programming, Inject et cetera
+- Learn Dagger 2 to do Dependency Injection to reduce redundant code when using architecture patterns and repository pattern
+	- https://android.jlelse.eu/practical-guide-to-dagger-76398948a2ea
+	- https://blog.mindorks.com/a-complete-guide-to-learn-dagger-2-b4c7a570d99c
+	- https://proandroiddev.com/dagger-2-on-android-the-simple-way-f706a2c597e9
+	- Dagger and Room https://medium.com/@marco_cattaneo/integrate-dagger-2-with-room-persistence-library-in-few-lines-abf48328eaeb
+	- https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
+	- https://medium.com/@princessdharmy/dagger-2-with-mvvm-simplified-3215b3cf4c96
+	- Dagger and Retrofit https://inducesmile.com/android/android-dagger-2-dependency-injection-with-retrofit-for-beginners/
+- Koin, new and trendy alternative to Dagger2 Dependency injection 
+	- https://adevait.com/blog/best-practices/easy-dependency-injection-in-android-with-koin/?__s=xxxxxxx
+	- https://medium.com/@farshidabazari/android-koin-with-mvvm-and-retrofit-e040e4e15f9d
+	- https://blog.usejournal.com/koin-as-an-alternative-to-dagger-2-a03e082a1c57
+
+<----------------GOOGLE PLAY RELEASE AN APP--------------------->
+
+- https://blog.aritraroy.in/releasing-android-apps-like-a-pro-52003779a13
+- https://medium.freecodecamp.org/the-mobile-app-launch-checklist-how-to-ship-apps-like-a-boss-84a20f5d8a45
+
+<----------------OTHER------------------------------>
+- Lint
+	- https://medium.com/@intelia/getting-the-most-out-of-android-lint-6df05a7ab054
+- Modules
+	- https://proandroiddev.com/modular-way-of-building-android-apps-500ac816825
+- Amazon Web Services (AWS)
+- Gradle
+- ProGuard
+
+LIBRARIRES
+- Bubble Navigation 								https://github.com/gauravk95/bubble-navigation
+- LongPressPopup 									https://github.com/RiccardoMoro/LongPressPopup
+- Airbnb animations using Adobe After Effects		https://github.com/airbnb/lottie-android
+- Best Android Chart 								https://github.com/PhilJay/MPAndroidChart
+- ErrorActivity Library 							https://github.com/TutorialsAndroid/crashx 
+- Airbnb Advanced RecyclerView 						https://github.com/airbnb/epoxy 
+- Display what libraries your app is using 			https://github.com/codekidX/osslib-android?__s=npakz7kzrv2bdnbsaeyp 
+
+DESIGN EXAMPLES
+- http://androidniceties.tumblr.com/ 
+- Android Design Patterns as examples https://pttrns.com/android-patterns?srtby=popularity_desc
+- https://www.uplabs.com/ Daily assets for designers and developers
+- UI Design Tips https://developer.android.com/guide/topics/ui
+	ARTICLES
+		- https://www.tamoco.com/blog/mobile-app-design-ux-ui-engagement/?utm_source=It%27s+an+app%27s+world&utm_campaign=925c89be8a-It%27s+an+app%27s+world+-+April&utm_medium=email&utm_term=0_57042b68ef-925c89be8a-114714559
+		- https://uxdesign.cc/the-power-of-good-user-interface-and-how-it-enhances-engagement-the-new-currency-in-the-digital-43a59bcd9bda
+
+USEFUL WEBSITES
+- https://jsonformatter.curiousconcept.com/ Can list JSON into trees and hide it
+- http://www.jsonschema2pojo.org/ AMAZING WEBSITE that lets you generate POJO for specific deserializer like GSON or Jackson
+BIG TUTORIAL WEBSITES
+- https://codinginflow.com/tutorials/android
+- https://android.jlelse.eu/learning-android-development-in-2018-part-1-83a514f6a205
+
+FLUTTER
+- Beginning point https://ayusch.com/flutter/
+- More beginner stuff https://fluttercrashcourse.com/
+
+KOTLIN
+- https://medium.com/@renaudcerrato/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7
+- https://medium.com/@marco_cattaneo/walking-with-kotlin-firsts-steps-c7ebcc182c96
+- MVVM FOR KOTLIN VERY GOOD https://resocoder.com/2018/09/07/mvvm-on-android-crash-course-kotlin-android-architecture-components/ 
+- https://www.raywenderlich.com/android/learn
+- RxJava + Kotlin https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
+- Retrofit, Coroutines and Kotlin https://android.jlelse.eu/android-networking-in-2019-retrofit-with-kotlins-coroutines-aefe82c4d777
+
+WAYS HOW TO APPROACH DEVELOPMENT OR OTHER IDEAS HOW TO DEVELOP A BETTER, EFFICIENT APP
+- Before implementing a new feature into the current app, create a sample app to test the feature to get a better understanding of new feature implementation method
+
+PERFORMANCE
+- https://developer.android.com/studio/build/optimize-your-build.html
+- https://medium.com/androiddevelopers/improving-build-speed-in-android-studio-3e1425274837
+
+NAMING CONVENTIONS
+- https://github.com/ribot/android-guidelines/blob/master/project_and_code_guidelines.md
+- https://jeroenmols.com/blog/2016/03/07/resourcenaming/
+- Also could be inside best practices https://guides.codepath.com/android/Organizing-your-Source-Files
+
+BEST PRACTICES
+- https://medium.com/mindorks/best-coding-practices-tips-and-more-for-android-4ec03c7eeb2c
+- Android Architecture Patterns https://www.youtube.com/playlist?list=PLWz5rJ2EKKc-lJo_RGGXL2Psr8vVCTWjM
+- Android Performance Patterns https://www.youtube.com/playlist?list=PLWz5rJ2EKKc9CBxr3BVjPTPoDPLdPIFCE
+
+SOFTWARE RELATED ARTICLES TO READ
+- https://android.jlelse.eu/building-a-shazam-clone-part-1-building-android-apps-series-179c2580a094
+- https://medium.com/@lewisdgavin/building-a-cardio-tracking-app-for-android-1f33935f924d
+- https://blog.aritraroy.in/what-my-2-years-of-android-development-have-taught-me-the-hard-way-52b495ba5c51
+- https://opensource.guide/how-to-contribute/
+
+- Some advanced stuff https://medium.com/@vardaansh1/an-introduction-to-android-interprocess-communication-and-common-pitfalls-ac4dfeddf89b
+
+NON-SOFTWARE RELATED ARTICLES TO READ
++ https://medium.com/s/youthnow/what-its-like-to-be-90-something-368780082573
+- https://medium.com/s/reasonable-doubt/a-guide-to-changing-someone-elses-beliefs-c08fc1cb956b
+- https://betterhumans.coach.me/cognitive-journaling-a-systematic-method-to-overcome-negative-beliefs-119be459842c
+- https://medium.com/s/story/the-male-leadership-traits-that-encourage-bad-leaders-acc4b2886aee
+- https://medium.com/s/the-nuance/is-sharing-your-feelings-always-healthy-a6be3579c4ae
+- https://betterhumans.coach.me/habit-building-self-awareness-exercises-to-keep-yourself-accountable-9a814c0c761d
+- https://betterhumans.coach.me/how-to-manage-your-fear-of-public-speaking-92964d531147
+- https://medium.com/s/office-politics/4-strategies-for-managing-someone-older-than-you-c6112815c36b
+- https://onezero.medium.com/browser-tabs-are-ruining-your-brain-ccf4151b845b
+- https://medium.com/s/futurehuman/were-in-a-crisis-of-the-heart-70852fa48b49
+- https://medium.com/s/teamhuman/investing-in-community-with-charles-hugh-smith-448ec19fde22
+- https://medium.com/s/story/i-cured-my-social-media-addiction-by-reading-books-9376c3025079
+- https://medium.com/@samgrittner/one-year-sober-697c81689444
+- https://medium.com/s/buy-yourself/the-end-of-authenticity-bd858bc3b413
+- https://medium.com/s/story/your-productivity-hinges-on-how-you-arrange-your-desk-6b278f018daf
+- https://medium.com/conquering-corporate-america/36-signs-you-pulled-this-presentation-together-at-the-last-minute-445ea8912899
+
+Android Interview Questions and Topics to know
+	- https://www.reddit.com/r/androiddev/comments/36hkf0/android_internships_and_junior_dev_positions/

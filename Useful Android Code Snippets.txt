@@ -1,0 +1,225 @@
+/*
+ * ADDING NEW OBSERVER TO LIVEDATA 3 WAYS HOW TO APPROACH
+ */
+
+//1. Longest way with new Observer class
+networkData.observeForever(new Observer<WeatherEntry[]>() {
+            @Override
+            public void onChanged(@Nullable WeatherEntry[] weatherEntries) {
+                weatherDao.bulkInsert(weatherEntries);
+            }
+        });
+//2. Shorter way with Lambda? This can be used ONLY if one method is executed in the onChanged Observer method
+networkData.observeForever(weatherEntries -> {
+           weatherDao.bulkInsert(weatherEntries);
+           //Log.d(LOG_TAG, "New values inserted"); if this is here, then lambda is not possible
+        });
+
+//3. Shortest way with lambda
+networkData.observeForever(weatherDao::bulkInsert);
+
+/*
+ * RETROFIT SIMPLE EXAMPLE 
+ */
+
+//1. GithubService interface
+interface GithubService {
+    @GET("repos/{owner}/{repo}/contributors")
+    Call<List<Contributor>> repoContributors(
+            @Path("owner") String owner,
+            @Path("repo") String repo);
+
+    public static final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("https://api.github.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+}
+
+//2. Invoking GithubService interface
+button.setOnClickListener((View v) -> {
+            GithubService githubService = GithubService.retrofit.create(GithubService.class);
+            Call<List<Contributor>> call = githubService.repoContributors("TheScriptan", "SEP3");
+            call.enqueue(new Callback<List<Contributor>>() {
+                @Override
+                public void onResponse(Call<List<Contributor>> call, Response<List<Contributor>> response) {
+                    final TextView textView = findViewById(R.id.textView);
+                    textView.setText(response.body().toString());
+
+                }
+
+                @Override
+                public void onFailure(Call<List<Contributor>> call, Throwable t) {
+                    final TextView textView = (TextView) findViewById(R.id.textView);
+                    textView.setText("Something went wrong: " + t.getMessage());
+                }
+            });
+        });
+
+//3. Custom Gson deserializer
+Gson gson = new GsonBuilder()
+        .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+        .create();
+
+Retrofit retrofit = new Retrofit.Builder()
+    .baseUrl(BASE_URL)
+    .addConverterFactory(GsonConverterFactory.create(gson))
+    .build();
+
+/*
+ * MVVM Architecture Code Snippets Room + Retrofit Combination
+ */
+
+//1. UserViewModel
+public class UserViewModel extends ViewModel {
+
+    private LiveData<User> userData;
+    private final UserRepository repository;
+
+    public UserViewModel(UserRepository repository){
+        this.repository = repository;
+        userData = repository.getUserData("");
+    }
+
+    public void setNewUser(String username){
+        userData = repository.getUserData(username);
+    }
+
+    public LiveData<User> getUserData(){
+        return this.userData;
+    }
+
+    public LiveData<List<User>> getUsers() {
+        return repository.getUsers();
+    }
+}
+
+//2. Repository - RefreshUser
+public LiveData<User> getUserData(String username){
+        refreshUser(username);
+        return userMutableLiveData;
+    }
+
+public void refreshUser(String username){
+        executors.diskIO().execute(() -> {
+            boolean userExists = userDao.hasUser(username);
+            Log.v("TEST", "User: " + userExists);
+            if(!userExists){
+                networkAdapter.githubService.fetchUserData(username).enqueue(networkAdapter.fetchUserData(userDao, userMutableLiveData, username));
+            } else {
+                userMutableLiveData.postValue(userDao.getUserByName(username));
+            }
+        });
+    }
+
+public Callback<User> fetchUserData(UserDao userDao, MutableLiveData<User> userMutableLiveData, String username) {
+    Callback<User> fetchUser = new Callback<User>() {
+        @Override
+        public void onResponse(Call<User> call, Response<User> response) {
+            executors.networkIO().execute(() -> {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    userDao.addUser(user);
+                    userMutableLiveData.postValue(userDao.getUserByName(username));
+                }
+            });
+        }
+
+        @Override
+        public void onFailure(Call<User> call, Throwable t) {
+            Log.v("TEST", "FAILED TO RETRIEVE API");
+        }
+    };
+    return fetchUser;
+}
+
+/*
+ * INJECTORUTILS
+ */
+
+public class InjectorUtils {
+
+    public static UserRepository provideRepository(Context context){
+        AppExecutors executors = AppExecutors.getInstance();
+        AppDatabase db = AppDatabase.getInstance(context);
+        NetworkAdapter networkAdapter = NetworkAdapter.getInstance(executors);
+        return UserRepository.getInstance(db.userDao(), networkAdapter, executors);
+    }
+
+    public static NetworkAdapter provideNetworkAdapter(){
+        AppExecutors executors = AppExecutors.getInstance();
+        return NetworkAdapter.getInstance(executors);
+    }
+
+    public static UserViewModelFactory provideUserViewModelFactory(Context context){
+        UserRepository repository = provideRepository(context);
+        return new UserViewModelFactory(repository);
+    }
+}
+
+/*
+ *  APPEXECUTORS
+ */
+public class AppExecutors {
+
+    // For Singleton instantiation
+    private static final Object LOCK = new Object();
+    private static AppExecutors sInstance;
+    private final Executor diskIO;
+    private final Executor mainThread;
+    private final Executor networkIO;
+
+    private AppExecutors(Executor diskIO, Executor networkIO, Executor mainThread) {
+        this.diskIO = diskIO;
+        this.networkIO = networkIO;
+        this.mainThread = mainThread;
+    }
+
+    public static AppExecutors getInstance() {
+        if (sInstance == null) {
+            synchronized (LOCK){
+                sInstance = new AppExecutors(Executors.newSingleThreadExecutor(),
+                        Executors.newFixedThreadPool(3),
+                        new MainThreadExecutor());
+            }
+        }
+        return sInstance;
+    }
+
+    public Executor diskIO() {
+        return diskIO;
+    }
+
+    public Executor mainThread() {
+        return mainThread;
+    }
+
+    public Executor networkIO() {
+        return networkIO;
+    }
+
+    private static class MainThreadExecutor implements Executor {
+        private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void execute(@NonNull Runnable command) {
+            mainThreadHandler.post(command);
+        }
+    }
+}
+
+/*
+ *  ROUNDED IMAGE MAYBE, NEED TO TEST THE SNIPPET
+ */ 
+
+Bitmap batmapBitmap = BitmapFactory.decodeResource(holder.itemView.getResources(), R.id.imageView);
+            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(holder.itemView.getResources(), batmapBitmap);
+            circularBitmapDrawable.setCornerRadius(holder.imageView.getMaxWidth());
+            circularBitmapDrawable.setCircular(true);
+
+            holder.imageView.setImageDrawable(circularBitmapDrawable);
+
+/*
+ *  VIEWMODELFACTORY GOOD TEMPLATE TO HANDLE MANY VIEWMODELS IN ONE FACTORY 
+ */
+
+//https://github.com/MindorksOpenSource/android-mvvm-architecture/blob/master/app/src/main/java/com/mindorks/framework/mvvm/ViewModelProviderFactory.java

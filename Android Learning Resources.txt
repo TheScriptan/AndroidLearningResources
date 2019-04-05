@@ -1,32 +1,23 @@
 /*
- * NOTES ABOUT THINGS I LEARN
+ * <-----------------------------NOTES ABOUT THINGS I LEARN----------------------------->
  */
+
 1. ScrollView - Scrollable Text with LinearLayout can have multiple scrolling texts
-2. Explicit Intent - 
-	new Intent(MainActivity.this, SecondActivity.class); 
-	startActivity(intent); startActivityForResult(intent, TEXT_REQUEST) public void onActivityResult
-	public static final String EXTRA_REPLY = "com.example.android.twoactivities.extra.MESSAGE"
-3. Implicit Intent
-	new Intent(Intent.ACTION_VIEW, webpageURI)
-	if (intent.resolveActivity(getPackageManager()) != null) {
-       startActivity(intent);
-    else Log.d("Can't handle this intent");
-4. ShareCompat.IntentBuilder
+2. Explicit Intent - prompt activity in my app and have specific name of it. Example: LoginActivity -> MainActivity
+3. Implicit Intent - look for intents beyond the scope of my app. Example: Web browser, Camera
+4. ShareCompat.IntentBuilder 					Share button
            .from(this)
            .setType(mimeType)
            .setChooserTitle("Share this text with: ")
            .setText(txt)
            .startChooser();
-5. public void onSaveInstanceState(Bundle outState) - save state when rotating a device
-6. Toast Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show(); Simple popup msg
-7. RadioButtons and Spinners for input
-8. Toolbar class for App Bar
-9. Hold on text view to edit/delete/share ContextMenu popout
-	- registerForContextMenu(view);
-	- public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
-	- getMenuInflater().inflater.inflate(R.menu.menu_context, menu)
+5. public void onSaveInstanceState(Bundle outState) - save state when rotating a device, only for small data. Large data is handled by ViewModel & LiveData
+6. Toast Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show(); Simple popup messages
+7. RadioButtons and Spinners - Good way to get user input
+8. Toolbar class for App Bar - By disabling in-built toolbar, I can add my own toolbar and have more customization power on it
+9. PopupMenu - Set onLongClickListener and initialize popupmenu to have great user interaction
 10. TabLayout + Toolbar + ViewPager + Fragments gives nice way to scroll through fake pages that are fragments
-11. RecyclerView best way to hold lists
+11. RecyclerView is the go to for holding lists in a view.
 12. To create button pressed https://stackoverflow.com/questions/3882064/how-to-change-color-of-button-in-android-when-clicked
 onClick(View view) {view.setBackground(getResources().getDrawable(R.drawable.selectorXML))}
 13. ProgressBar. Very easy to set up. progressBar.getProgress(); progressBar.setProgress();
@@ -34,14 +25,13 @@ onClick(View view) {view.setBackground(getResources().getDrawable(R.drawable.sel
 15. Bottom navigation bar
 16. Snackbar is similar to Toast except it opens up with a small black border from the bottom.
 17. ArrayAdapter is useful to put ArrayList into it so ListView can retrieve data from ArrayAdapter that prepares TextViews to send to ListView
-	Also I can extend ArrayAdapter class to make list more complicated and have multiple values stored, for instance User that has Name and Surname can be an object, create ArrayList<Users> store it in ArrayAdapter and then set ListView adapter's to usersAdapter. Also override getView to create multiple views in one list.
-18. ImageIcon setVisibility(View.GONE) automatically deletes the imageview and creates proper aligning with the XML objects
+	Also I can extend ArrayAdapter class to make list more complicated and have multiple values stored, for instance User that has Name and Surname can be an object, create ArrayList<Users> store it in ArrayAdapter and then set ListView adapter's to usersAdapter. Also override getView to create multiple views in one list. (But RecyclerView > ListView so not using ListView anymore)
+18. ImageIcon setVisibility(View.GONE) automatically deletes the imageview and corrects alignment in the XML file.
 19. MediaPlayer.create(this, R.raw.music); player.start(); player.stop(); player.getDuration(); player.getCurrentPosition(); ALl of this can be used to create a MediaPlayer and combine it with a seekbar
 20. SeekBar. A MP3-like progress bar that can be skipped et, cetera. seekbar.setProgress(int) ant that is it, just need to have a updated variable
 21. Handler h = new Handler(); h.postDelayed(loopedFunction, miliseconds); loopedFunction Runnable will be updated every time x miliseconds passes, good for async tasks
-22. ListView setOnItemClickListener provides the item person clicked and gives int i position which can later be used to retrieve specific object from ArrayList
-23. Async callbacks retrieves action to the synchronous when something occurs, for example MediaPlayer.setOnCompletionListener activates when song ends
-24. <FrameLayout
+22. Async callbacks retrieves action to the synchronous when something occurs, for example MediaPlayer.setOnCompletionListener activates when song ends
+23. <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/category_numbers">
@@ -52,11 +42,8 @@ onClick(View view) {view.setBackground(getResources().getDrawable(R.drawable.sel
             android:text="@string/category_numbers" />
     </FrameLayout>
     Allows to have a view with its own background and whenever it is clicked, it will show circle ripple effect that it was clicked. Crazy simple
-25. To make ListView items responsive you can either create <View> and set background or if layout is ListView add this android:drawSelectorOnTop="true"
-26. ViewPager + PagerAdapter + TabLayout gives fragmented views where you can swipe left and right to switch fragments. 
-27. import com.example.sqlitecourse.data.PetContract.PetEntry;
-	- PetContract has subclass PetEntry which holds many constants and in order to avoid writing PetContract.PetEntry.CONSTANT1 importing like this fixes the issue
-28. ContentProvider - Manages access to a structured set of data.
+24. ViewPager + PagerAdapter + TabLayout gives fragmented views where you can swipe left and right to switch fragments. 
+25. ContentProvider - Manages access to a structured set of data.
 	- Good abstraction layer between data source & UI code (can add data validation, can modify how data is stored and UI code is not unaffected)
 	- Share data with other apps
 	- Works well with other Android Framework classes
@@ -69,7 +56,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- content://com.example.android.pets/pets
 	- content://com.example.android.pets/pets/# ; # - is a wildcard character, where any integer can be replaced to this wildcard
 	- content://com.example.android.pets/pets/* ; * - is a wildcard character, where any string can be replaced to this wildcard
-29. Room persistence library
+26. Room persistence library
 	- Basic Sample App for Room implementation https://github.com/googlesamples/android-architecture-components/tree/master/BasicSample
 	- @Query("SELECT * FROM user WHERE first_name LIKE :first AND "
            + "last_name LIKE :last LIMIT 1")
@@ -78,19 +65,18 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- Consider using DatabaseHelper which stores DAO references, it can give more structure to the project
 	- @Embedded tag helps to include POJO within a pojo, for example I have user which has Address class inside of him, annotate Address with @Embedded
 	AND also @Embedded(prefix = "word1_") will help to avoid duplicate column names and fix the error
-HTTP Networking
+27. Udacity HTTP Networking Notes
 	- To display time in an integer variable, use Unix Timestamp, easy to send it through JSON
-	- By defining XML shapes a flexible asset is created that will scale across all devices
+	- By defining XML shape, a flexible asset is created that will scale across all devices
 	- public void completePurchase() throws InvalidPurchaseException this notifies the compiler that programmer MUST handle the exception of this method by using try/catch block
-	- Always handle networking requests in a different thread/AsyncTask to never block the on-going thread's procedure
+	- Always handle networking requests in a different thread/AsyncTask to never block the on-going thread's and main thread procedures
 	- public class MyAsyncTask extends AsyncTask<Params, Progress, Result>
 		1. Result doInBackground() {publish Progress(73); return Result;} method that is executed in the background, this is where you request HTTP
 		2. onProgressUpdate(Progress p) this method can be used to update UI with the new values to inform the user about the current progress of AsyncTask
 		3. void onPostExecute(Result result) to communicate between main thread and background thread need to override this method, because it runs in main thread. This method will be called when doInBackground() finishes.
 	- When waiting for HTTP Request implement a ProgressBar to display how long it will take to download API data
 	- Check network connectivity and if it does not exist, show it for the user
-Firebase SATURDAY SUNDAY MONDAY
-	- To add firebase to build.gradle I also need to add this in repositories {}: maven { url "https://maven.google.com" }
+28. Udacity Firebase SATURDAY SUNDAY MONDAY Notes
 	- Firebase Realtime database - sync app data in realtime. Stored in JSON. Arrays are not recommended, only JSON dictionaries
 	- FirebaseDatabase class is an entry point to the database
 	- DatabaseReference references specific part of the database
@@ -105,21 +91,21 @@ Firebase SATURDAY SUNDAY MONDAY
 	- AuthUI.getInstance().signout(Context context) signs out the user without worries
 	- FirebaseApp.initialize has to happen in Application class. Need to write Name for application in manifest, create a class extending application and in overriden onCreate method initialize FirebaseApp OOOOR downgrade google.play.services to 4.0.0
 	- Firebase needs an empty constructor in a model class!
-32. MVVM: (Fragment (View) -> ViewModel -> Repository -> Firebase -> Room Database) Two-way communication
-	- Repositories are made as a singleton and I can initialize them in MainActivity to send ApplicationContext if needed, BUT it is better to use ViewModelProviders.Factory to initialize Repository in ViewModel
+29. MVVM: (Fragment (View) -> ViewModel -> Repository -> Data Sources (Room, Firebase, Retrofit) Two-way communication
+	- Repositories, Data Source handler files are made as singletons and I can initialize them in InjectorUtils to send ApplicationContext if needed, and use  ViewModelProviders.Factory to initialize Repository in ViewModel
 	- It is good to have InjectorUtils.java file where I can initialize repository, database, networkSource, firebase et cetera
 	- When using MVVM + Room + Retrofit + Repository, to sync web services with Room, do this: Retrofit gets web api request done, onResponse create new Runnable there and add web service data to Room
-	- MVVM packaging: application (views, activities, viewmodels) + business (repository, daos, database, networking, et cetera) + Utils (InjectorUtils & AppExecutors)
+	- MVVM packaging: com.example.application (views, activities, viewmodels); com.example.business (repository, daos, database, networking, et cetera) + Utils (InjectorUtils & AppExecutors)
 	- Database should have a DatabaseHelper class which contains all DAO interfaces
-32. ViewModel
+30. ViewModel
 	- ViewModel vs. onSaveInstanceState. Store all data in ViewModel while store important and short data in onSaveInstance for example ViewModel has all attributes and onSaveInstanceState has userId
 	- ViewModelProviders.of when first called in onCreate initialized ViewModel, but when activity destroys itself and calls onCreate again, it calls pre-existing ViewModel
 	- The constructor that is automatically called by ViewModelProvider is the default one - it takes no arguments. If you want to create a different constructor for a view model, you'll need to make a view model provider factory. 
-	- ViewModelProvider.Factory overrides create method which is invoked when ViewModel is created when used ViewModelProviders.of(this).get(class.class), by using factory you can create custom constructors for ViewModel classes and initialize repository in a more efficient way, for example using InjectorUtils
+	- ViewModelProvider.Factory overrides create method which is invoked when ViewModel is created when used ViewModelProviders.of(this, factory).get(class.class), by using factory you can create custom constructors for ViewModel classes and initialize repository in a more efficient way, for example using InjectorUtils
 	- ViewModel can also be used to share data between fragments easily
-33. LiveData
+31. LiveData
 	- LiveData is an observable data holder. This allows view to observe LiveData without creating rigid dependency paths
-	- WIth LiveData I do not need to requery AT ALL, observers handles this
+	- By using LiveData with Room or Firebase, I do not need to requery as Room returns LiveData automatically when data is updated and Firebase has listeners which can help posting MutableLiveData and sending to Repository LiveData<RetrievedData>
 	- If I want to edit stored values inside LiveData I should use MutableLiveData setValue(T) - sets value and notifies attached observers, must be ran in main thread, if I want to run in a background thread, run postValue(T): example  
 	liveData.postValue("a");
 	liveData.setValue("b"); 
@@ -128,22 +114,18 @@ Firebase SATURDAY SUNDAY MONDAY
 	 Note: LiveData and it's subclasses contain both a setValue() and a postValue() method. The difference is that setValue() must be called from the main thread. postValue() is for when the call occurs off of the main thread. You'll see why you use postValue() next.
 	 - When attaching observers to LiveData, ensure that LiveData instance isn't changing, because then you need to attach a new observer and that would be bad practice
 	 - When using MVVM with LiveData, try to have MutableLiveData as low as I can in the tiers, for example MutableLiveData should live in Retrofit data source or Room data source
-33. Repository pattern in MVVM
-	- Repository class SHOULD have MutableLiveData but when giving external access to other classes, ONLY provide LiveData 
+32. Repository pattern in MVVM
+	- Repository class SHOULD have only LiveData and synchronize it from different data sources to create single source of truth in Repository class 
 	- In Repository when initializing data, I should make a boolean value to check if data was initialized in this app's lifetime
-	- Only Repository should have MutableLiveData as it is single source of truth, and expose only LiveData to view it, ViewModel can have MutableLiveData if UI is updating the LiveData
-	- the repository should be the single source of truth for all data operations
+	- The repository should be the single source of truth for all data operations
 	- By using AppExecutors I can create smooth concurrency for repository to evaluate when to fetch data from API or when to retrieve it from Room
 33. SharedPreferences are good when you want to save minimum amount of data
 34. Dependency injection is the idea that you should make required components available for a class, instead of creating them within the class itself. An example of how the Sunshine code does this is that instead of constructing the WeatherNetworkDatasource within the SunshineRepository, the WeatherNetworkDatasource is created via InjectorUtilis and passed into the SunshineRepository constructor. One of the benefits of this is that components are easier to replace when you're testing.
 35. InitializeApplication extends Application. Executes any code before activities are onCreated
-	- https://medium.com/@balakrishnan.750/android-application-class-a8a1d64c82d1
-	- https://github.com/codepath/android_guides/wiki/Understanding-the-Android-Application-Class
-	- https://stackoverflow.com/questions/45903111/android-extending-application-class-why-do-we-need-to-implement-singleton-patt
 36. Chronometer useful in-built class to display chronometer
 37. Retrofit2
-	- Retrofit allows to serialize/deserialize JSON by using its own modified GSON very easily
-	- Retrofit requests has to run on a parallel thread to UI thread
+	- Retrofit allows to serialize/deserialize JSON by using its own modified GSON very easily (There are other deserializers too)
+	- Retrofit requests have to run on a parallel thread to UI thread
 	- Model has to match the JSON namings, use this: http://www.jsonschema2pojo.org/ as a reference 
 	- All HTTP requests are written in interface e.g. GithubService.class 
 	- It can be useful to initialize Retrofit builder inside the interface so the code is less clunky
@@ -151,10 +133,12 @@ Firebase SATURDAY SUNDAY MONDAY
 	- To invoke request, use call.enqueue and deserialized object is in onResponse(... Response<List<Contributor> response) response.body();
 	- always use response.isSuccessful() before doing any action on onResponse method
 	- To use LiveData with it, use MutableLiveData, when onResponse is successfull, do mutableLiveData.postValue(response.body());
-38. FrameLayout's layout_gravity="bottom|end"
+38. FrameLayout's layout_gravity="bottom|end" - neat code for positioning for example FAB
+39. RecyclerView
+	- When binding ClickListeners in Adapter, bind them in onBindViewHolder, so getAdapterPosition returns a correct position
 
 /*
- * LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS
+ * <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
  */
 
  <-----------USER INTERFACE----------->
@@ -169,10 +153,11 @@ Firebase SATURDAY SUNDAY MONDAY
 + Advanced Toolbar usage https://guides.codepath.com/android/using-the-app-toolbar
 - Good Intent Tutorial https://www.vogella.com/tutorials/AndroidIntent/article.html#usingintents_call
 - Fragments
-	http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
-	http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#Lifecycle
-	http://developer.android.com/training/basics/fragments/index.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+	- http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+	- http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#Lifecycle
+	- http://developer.android.com/training/basics/fragments/index.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
 	- I could always use activities and inside them place fragment so whenever I want to implement swipeable UI I can easily do so
+	- DialogFragment
 - Navigation NEW ANDROID THING
 	- https://developer.android.com/guide/navigation
 	- MARCH 13th TUTORIAL BUT IN KOTLIN :^((( https://codelabs.developers.google.com/codelabs/android-navigation/index.html?index=..%2F..index#0
@@ -198,7 +183,8 @@ Firebase SATURDAY SUNDAY MONDAY
 	+ https://hackernoon.com/android-recyclerview-onitemclicklistener-getadapterposition-a-better-way-3c789baab4db
 	- https://medium.com/@zackcosborn/step-by-step-recyclerview-swipe-to-delete-and-undo-7bbae1fce27e
 	- https://medium.com/@slarsoncreative/creating-a-multiple-view-type-recyclerview-using-the-visitor-pattern-1184d8732167
-- Rounded avatars/images https://evel.io/2013/07/21/rounded-avatars-in-android/
+	- https://medium.com/@haydar_ai/better-way-to-get-the-item-position-in-androids-recyclerview-820667d435d4
+- Glide round images
 - FrameLayout
 + Bottom navigation view https://medium.com/@oluwabukunmi.aluko/bottom-navigation-view-with-fragments-a074bfd08711
 - Compound Views (Custom View Components probably)
@@ -233,6 +219,7 @@ Firebase SATURDAY SUNDAY MONDAY
 	- Firebase & MVVM https://medium.com/globallogic-latinoamerica-mobile/viewmodel-firebase-database-3cc708044b5d
 	- https://proandroiddev.com/firebase-android-series-firestore-17e8951c574e
 - Firebase LiveData https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
+- https://pamartinezandres.com/lessons-learnt-the-hard-way-using-firebase-realtime-database-c609b52b9afb
 <------------------ARCHITECTURE--------------->
 
 - MODERN APP ARCHITECTURE USING MVVM AND ARCHITECTURE COMPONENTS
@@ -255,6 +242,7 @@ Firebase SATURDAY SUNDAY MONDAY
 LIVE DATA
 	- https://proandroiddev.com/why-should-you-wrap-livedata-with-your-own-abstraction-e738d94cc745
 	- https://medium.com/@Strk7/the-gentle-guide-to-livedata-2833eee97bd5
+	- https://medium.com/androiddevelopers/viewmodels-and-livedata-patterns-antipatterns-21efaef74a54
 
 ARCHITECTURE COMPONENTS
 	- Data binding support
@@ -346,6 +334,12 @@ SOFTWARE ENGINEERING THEORY
 - Amazon Web Services (AWS)
 - Gradle
 - ProGuard
+- How to create secure project and ensure security?
+- Best way to set up payment via Paypal? 
+- Application
+	- https://medium.com/@balakrishnan.750/android-application-class-a8a1d64c82d1
+	- https://github.com/codepath/android_guides/wiki/Understanding-the-Android-Application-Class
+	- https://stackoverflow.com/questions/45903111/android-extending-application-class-why-do-we-need-to-implement-singleton-patt
 
 LIBRARIRES
 - Bubble Navigation 								https://github.com/gauravk95/bubble-navigation

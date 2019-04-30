@@ -2,6 +2,7 @@
  * <-----------------------------NOTES ABOUT THINGS I LEARN----------------------------->
  */
 
+
 1. ScrollView - Scrollable Text with LinearLayout can have multiple scrolling texts
 2. Explicit Intent - prompt activity in my app and have specific name of it. Example: LoginActivity -> MainActivity
 3. Implicit Intent - look for intents beyond the scope of my app. Example: Web browser, Camera
@@ -103,6 +104,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- The constructor that is automatically called by ViewModelProvider is the default one - it takes no arguments. If you want to create a different constructor for a view model, you'll need to make a view model provider factory. 
 	- ViewModelProvider.Factory overrides create method which is invoked when ViewModel is created when used ViewModelProviders.of(this, factory).get(class.class), by using factory you can create custom constructors for ViewModel classes and initialize repository in a more efficient way, for example using InjectorUtils
 	- ViewModel can also be used to share data between fragments easily
+	- To share data between Fragments and whole app, in fragments don't use this when instantiating ViewModel but use getActivity in ViewModelProvider method
 31. LiveData
 	- LiveData is an observable data holder. This allows view to observe LiveData without creating rigid dependency paths
 	- By using LiveData with Room or Firebase, I do not need to requery as Room returns LiveData automatically when data is updated and Firebase has listeners which can help posting MutableLiveData and sending to Repository LiveData<RetrievedData>
@@ -136,36 +138,157 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 38. FrameLayout's layout_gravity="bottom|end" - neat code for positioning for example FAB
 39. RecyclerView
 	- When binding ClickListeners in Adapter, bind them in onBindViewHolder, so getAdapterPosition returns a correct position
+40. ConstraintLayout
+	- AutoConnect sets up connections for costraining a view\
+	- Aspect ratio is useful to retain 16:9 aspect for different device screens
+	- Use barriers to align TextViews with EditText
+	- View All Attributes has favorite attribute feature that allows to specify attributes you work with the most in Attributes View
+	- If ConstraintLayout lags, turn off Live Rendering
+41. AppBar
+	- To create Appbar use onCreateOptionsMenu. To listen for selection use onOptionsItemSelected
+	- To add listeners for SearchView do so in onCreateOptionsMenu
+	- SearchView OnActionExpand has two methods onExpand and onCollapse
+	- To listen for user submission, use OnQueryTextListener
+	- To collapse SearchView in menu.xml showAsAction="ifRoom|collapseActionView"
+	- To collapse searchview use: searchView.setIconified(true); searchView.clearFocus(); searchItem.collapseActionView();
+	- ActionProviders are pre-made menu items to handle action, for example ShareActionProvider
+42. Fragments
+	- To add fragment to backstack, write addToBackStack(null);
+	- Commit needs to be last in FragmentTransaction and before commit I can add setTransition to create animations for transition
+	- Fragment can communicate with activity easily with getActivity(); e.g TextView textView = getActivity().findViewById(R.id.textView);
+	- Activities likewise can communicate with fragments ExampleFragment frag = getSupportFragment().findFragmentById(R.id.example_fragment);
+	- Any items added to AppBar from Fragment are appended to the existing AppBar e.g from Activity
+	- When using ViewModels always reference a viewModel from activity with getActivity().viewModelName instead of creating a new reference inside of frag
+		OR use requireActivity when using ViewModelProviders.of(requireActivity()).get(MyViewModel.class);
+43. Navigation Architecture Component
+	- Only single activity must contain nav_graph.xml and this activity has NavHostFragment that is found in Containers tab in layout editor
+	- To disable going back to LoginFragment, set PopTo to LoginFragment and Inclusive to true
+	- To navigate from one fragment to another use this: Navigation.findNavController(MainActivity.this, R.id.nav_host_Fragment).navigate(R.id.emptyFragment)
+	- To get current destination of nav_graph.xml use Navigation.findNavController(this, R.id.nav_host_Fragment).getCurrentDestination().getId();
+	- FTUE (First-time user experience) this should be kept as a nested graph when users launch the app for the first time.
+	- To support navigateUp button, add this public boolean onSupportNavigateUp() { return nav.navigateUp(); }
+	- For BottomViewNavigation to work, R.menu IDs has to match with R.navigation ids. main, friendList, userProfile
+44. Firebase
+	- To have more information about the user, save it in a document/child with name of UID that I can retrieve from FirebaseAuth.getCurrentUser().getUid();
+	- POJOs should have a method toMap()
+	- When adding objects to Firestore, add them in Map<String, Object> type. String is key, object is value
+	- Two ways to reference: CollectionReference & DocumentReference
+	- If I don't want duplicate data, define my own IDs
+	- ref.add or ref.set has success and failure listeners
+	- ref.add(note).addOnSuccessListener has a documentReference where I can retrieve UID
+	- Should try to attach LiveData listeners in onStart or onResume (NEED TESTING AS onStart may not work)
+	- SnapshotListener has FirebaseFirestoreException and before using documentSnapshot, check if e != null
+	- I may need to have attachListeners and detachListeners methods in FirebaseHelper for SnapshotListeners. So this can be called in Activities onStart and onRemove. Or use Executors to do this
+	- noteref.set(noteHashMap) method overrides the object, but noteRef.set(note, SetOptions.merge()) solves the issue. This will create new document if it is not existing, if it exists, it will override only existing fields I declared. Or use noteRef.update(noteHashMap) or noteRef.update(MapKey, MapValue);
+	- noteRef.addSnapshotListener(Executor executor, eventlistener) returns ListenerRegistration which I can use to remove listener to avoid leaking and avoid using activity reference in FirebaseHelper class. 
+	- Note note = documentSnapshot.toObject(Note.class) this automatically retrieves Note object from Firestore
+	- QueryDocumentSnapshot guarantees it exists so no need to check for null
+	- To exclude unecessary data in Firestore, write @Exclude ONLY above getter of the attribute
+	- To make a SIMPLE QUERY write. Such queries can be used only on ONE FIELD. In this example: priority 
+		notebookRef.whereGreaterThanOrEqualTo("key", 5).orderBy("priority", Query.Direction.DESCENDING).limit(3).get()...
+			- whereGreaterThanOrEqualTo - if key >= 5
+			- orderBy - ASCENDING or DESCENDING
+			- limit - how many items to display
+	- COMPOUND QUERY. Can filter multiple fields, for example: priority, money, streaks, et cetera. To create one I can get a link for Indexed queries via Log.v when mixing two fields to filter, or do it manually
+	- MERGE QUERIES. Allows to have OR check not only AND
+		Task task1 = notebookRef.whereLessThan("priority", 5);
+		Task task2 = notebookRef.whereGreaterThan("priority", 2)
+		Task<QuerySnapshot> allTasks = Tasks.whereAllSuccess(task1, task2);
+		Then I have to make nested loop to iterate through two queries that got results for individual query settings
+	- Firebase Pagination. Query.startAt/startAfter et cetera
+		- DocumentSnapshot lastResult; Limit query to 3; set lastResult to queryResult. Check if lastResult was not null, then query = startAfter(lastResult). This basically knows where the last query ended because of the limit and fires a new query
+	- DocumentChange. Contains objects that were changed. If I delete 4 documents, DocumentChange will contain 4 objects
+		- oldIndex is a position before the change
+		- newIndex is a position after the change
+		- documentChange.getType() can be but in a switch to see if document got ADDED, MODIFIED, REMOVED
+	- Batched write and only write. If it fails at least in one document, none of the changes will be applied. Can run offline
+		- batch needs a DocumentReference to manipulate
+		- batch.set(docRef, new Object)
+		- batch.update(docRef, "Key", "Value");
+		- batch.delete(docRef);
+	- Transactions can read and write. Also atomic. Can run only online
+		- new Transactoin.Function<Return type>. Here I specify what I will return. To return it, attach onSuccessListener and it will give me what I want
+45. For managing states of views like button, text view, store many booleans inside of a boolean so states stays relevant
+46. Notifications
+	- NotificationManager - used to create a notification channel and start a notification using .notify
+	- NotificationChannel is important for API 26+. Need to create a static final for NotificationChannel
+	- NotificationCompat.Builder creates notification structure. This is where I declare pending intens for user to react with like a button or onSwipe/onDelete notification. Can declare icon, contentTitle, contentText. Best is to make a method to getNotificationCompatBuilder and build on top of it, for example an updateNotification
+	- Notifications needs to have a final int NOTIFICATION_ID to be played around with
+	- To add receivers to notification create BroadcastReceiver, put it inside of PendingIntent with a method PendingIntent.getBroadcast.
+	- NotificationCompat.Builder.addAction creates a button for user to click inside of notification
+47. BroadcastReceiver
+	- Can create inside a notificationHelper class as an inner class or use Android Studio to create a predefined BroadcastReceiver and setup Manifest file for receiver
+48. AlarmManager
+	- API 21 AlarmManager has a method calle getNextAlarmClock() that returns next alarm set up on the device 
+	-  To set up repeated AlarmManager I need AlarmReceiver where I can deliver notification and to deliver notification I use alarmManager.setInexactRepeating method. I need two time intervals repeatInterval and triggerTime. To apply this to Wake Up Together I could manipulate repeatInterval to the future time of when to wake up and add it to triggerTime and based on that always resetup alarmManager when alarm is updated
+49. BuildConfig.APPLICATION_ID returns package name and so I could add Intent to this for example. BuildConfig.APPLICATION_ID + ".ACTION_CUSTOM_BROADCAST"
 
+/*
+ * <-----------------------------ANDROID STUDIO IDE----------------------------->
+ */
+
+- LOGT - private static final String TAG = "MainActivity";
+- SHIFT + F1 - In Design, select component such as TextView, press shortcut and browser will open up the documentation about that component
+- ALT + Left/Right - Switch through tabs
+- ALT + Up/Down - Switch through method declarations
+- ALT + J - In model I can easily select 3 types for example String and edit, when I have integers on my way
+- SHIFT + F6 Selects all variable names and I can edit it everywhere in the class
+- CTRL + ALT + O - Deletes unecessary imports
+- CTRL + P - Shows what to insert in a function/constructor. VERY USEFUL
+- CTRL + N - ClassName:120 moves UI to a classname and line 120
+- 2X SHIFT - Search everywhere, even methods
+- CTRL + E - Recent files opened
+- ALT + CTRL + F7 - Shows usages of a class/method
+
+/*
+ * <-----------------------------GRADLE----------------------------------------->
+ */
+- Optimization
+	gradle.properties
+	org.gradle.daemon=true
+	org.gradle.parallel=true
+	org.gradle.jvmargs=-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+	org.gradle.caching = true
+	org.gradle.configureondemand=true 
+	android.enableBuildCache=true
+	build.gradle
+	customBuildFlavor {
+	   minSdkVersion 21   // makes build time slightly faster
+	    aaptOptions {
+	       cruncherEnabled = false
+	   }
+	   dexOptions {
+	       preDexLibraries = true
+	   }
+	   resConfigs("en", "xxhdpi") // specify a default language & resolution for faster packing of build
+	}
 /*
  * <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
  */
 
  <-----------USER INTERFACE----------->
 
-- Constraint Layout https://codelabs.developers.google.com/codelabs/constraint-layout/index.html#0
-- More on Constraint Layout https://developer.android.com/training/constraint-layout/
-- Layout performances https://android-developers.googleblog.com/2017/08/understanding-performance-benefits-of.html
-- ConstraintLayout Performance https://www.reddit.com/r/androiddev/comments/a1ijuz/constraint_layout_performance/
-- https://developer.android.com/guide/topics/ui/
-- AppBar Tutorial https://developer.android.com/training/appbar/
-- Style and Themes https://developer.android.com/guide/topics/ui/look-and-feel/themes
++ Constraint Layout https://codelabs.developers.google.com/codelabs/constraint-layout/index.html#0
++ More on Constraint Layout https://developer.android.com/training/constraint-layout/
++ Layout performances https://android-developers.googleblog.com/2017/08/understanding-performance-benefits-of.html
++ ConstraintLayout Performance https://www.reddit.com/r/androiddev/comments/a1ijuz/constraint_layout_performance/
++ AppBar Tutorial https://developer.android.com/training/appbar/
++ Style and Themes https://developer.android.com/guide/topics/ui/look-and-feel/themes
+	- https://medium.com/mindorks/mastering-android-themes-chapter-1-4aadfa750ca7
+	- https://medium.com/@malmstein/working-effectively-with-legacy-android-styles-and-themes-92d182323c15
+- Text Appearance 
+	- https://medium.com/androiddevelopers/whats-your-text-s-appearance-f3a1729192d
 + Advanced Toolbar usage https://guides.codepath.com/android/using-the-app-toolbar
-- Good Intent Tutorial https://www.vogella.com/tutorials/AndroidIntent/article.html#usingintents_call
++ Good Intent Tutorial https://www.vogella.com/tutorials/AndroidIntent/article.html#usingintents_call
 - Fragments
-	- http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
-	- http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#Lifecycle
-	- http://developer.android.com/training/basics/fragments/index.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
-	- I could always use activities and inside them place fragment so whenever I want to implement swipeable UI I can easily do so
+	+ http://developer.android.com/guide/components/fragments.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
 	- DialogFragment
 - Navigation NEW ANDROID THING
-	- https://developer.android.com/guide/navigation
-	- MARCH 13th TUTORIAL BUT IN KOTLIN :^((( https://codelabs.developers.google.com/codelabs/android-navigation/index.html?index=..%2F..index#0
-	- https://proandroiddev.com/android-jetpack-navigation-to-the-rescue-fe588271d36
+	+ https://developer.android.com/guide/navigation
 	- https://medium.com/deemaze-software/android-jetpack-navigation-architecture-component-b603c9a8100c
+	- https://medium.com/@serbelga/shared-elements-in-android-navigation-architecture-component-bc5e7922ecdf
 - TabLayout Tutorial https://guides.codepath.com/android/google-play-style-tabs-using-tablayout#sliding-tabs-layout
 - ViewPager https://blog.usejournal.com/early-introduction-of-viewpager2-ff38c60d2169
-- Intent.putExtra
 - Drawable resource file XML <shape> XML class in specific to create small visuals 
 	https://guides.codepath.com/android/Drawables
 	https://android.jlelse.eu/android-shape-drawables-tutorial-17fbece6fef5
@@ -175,8 +298,32 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- https://material.io/design/introduction/#principles
 	- https://material.io/collections/developer-tutorials/#
 
+
+- https://developer.android.com/guide/topics/ui/
+	- Layouts
+	- Notifications
+	- Add the app bar
+	- Control the system UI visibility
+	- Designing effective navigation
+	- Implementing effective navigation
+	- Slide between fragments using ViewPager
+	- Supporting Swipe to Refresh
+	- Toasts overview
+	- Pop up messages
+	- Dialogs
+	- Menus
+		- https://medium.freecodecamp.org/an-introduction-to-android-menus-c9f382264b49
+	- Search Overview
+	- Copy and paste
+	- Drag and Drop
+	- Create backward-compatible UIs
+- TransitionManager
 - Animations
 	- https://medium.com/@andkulikov/animate-all-the-things-transitions-in-android-914af5477d50
+	- https://developer.android.com/training/animation/
+	- https://medium.com/@adawoud/android-animation-apis-cheat-sheet-d9b160381f18
+- MotionLayout 
+	- https://medium.com/google-developers/introduction-to-motionlayout-part-i-29208674b10d
 - Flexbox layout https://blog.mindorks.com/play-with-flexbox-layout-for-android
 - Charts https://www.mobindustry.net/how-to-quickly-implement-beautiful-charts-in-your-android-app/
 - RecyclerView https://android.jlelse.eu/get-expandable-recyclerview-in-a-simple-way-8946046b4573
@@ -184,13 +331,21 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- https://medium.com/@zackcosborn/step-by-step-recyclerview-swipe-to-delete-and-undo-7bbae1fce27e
 	- https://medium.com/@slarsoncreative/creating-a-multiple-view-type-recyclerview-using-the-visitor-pattern-1184d8732167
 	- https://medium.com/@haydar_ai/better-way-to-get-the-item-position-in-androids-recyclerview-820667d435d4
-- Glide round images
+	- https://proandroiddev.com/a-guide-to-recyclerview-selection-3ed9f2381504
+	- https://medium.com/@supahsoftware/custom-android-views-carousel-recyclerview-7b9318d23e9a
+	- https://medium.com/quark-works/understanding-recycleview-decorations-205568c72f13
++ Glide round images
 - FrameLayout
 + Bottom navigation view https://medium.com/@oluwabukunmi.aluko/bottom-navigation-view-with-fragments-a074bfd08711
 - Compound Views (Custom View Components probably)
 	- https://github.com/frogermcs/InstaMaterial/blob/5a6d0939f9335bf8845c979d22af71665716a20c/app/src/main/java/io/github/froger/instamaterial/ui/view/FeedContextMenu.java#L16-L29
 	- https://medium.com/square-corner-blog/advocating-against-android-fragments-81fd0b462c97
-- Text Appearance https://medium.com/androiddevelopers/whats-your-text-s-appearance-f3a1729192d
+	- https://medium.com/quark-works/custom-view-lifecycle-and-some-tips-6241f8c15608
+	- https://medium.com/@supahsoftware/custom-android-views-search-view-and-circular-reveal-animations-7bf2dadc800
+- CardView
+- Parcelable
+- AlertDialog 
+	- https://medium.com/@studymongolian/making-an-alertdialog-in-android-2045381e2edb
 
 <-------------------THREADING------------>
 
@@ -213,13 +368,28 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 
 <---------------------FIREBASE--------------->
 
+- Many Firebase tutorials https://proandroiddev.com/firebase-android-series-learning-firebase-from-zero-to-hero-3bacbdf8e048
 - Firebase RecyclerView Adapter https://medium.com/android-grid/how-to-use-firebaserecycleradpater-with-latest-firebase-dependencies-in-android-aff7a33adb8b
-- Firebase Realtime database
++ Firebase Realtime database
++ Firebase Firestore
 - Firebase MVVM
 	- Firebase & MVVM https://medium.com/globallogic-latinoamerica-mobile/viewmodel-firebase-database-3cc708044b5d
 	- https://proandroiddev.com/firebase-android-series-firestore-17e8951c574e
-- Firebase LiveData https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
-- https://pamartinezandres.com/lessons-learnt-the-hard-way-using-firebase-realtime-database-c609b52b9afb
++ https://pamartinezandres.com/lessons-learnt-the-hard-way-using-firebase-realtime-database-c609b52b9afb
+- Firebase Cloud Messaging
+		- https://blog.usejournal.com/send-device-to-device-push-notifications-without-server-side-code-238611c143
+- Firebase Realtime Chat App https://medium.com/@mendhieemmanuel/building-real-time-android-chatroom-with-firebase-99a5b51cb4f7
+- Firebase YT Tutorial with Firestore, Storage, Notifications https://www.youtube.com/playlist?list=PLrnPJCHvNZuBf5KH4XXOthtgo6E4Epjl8
+- Firebase One to One Data Structure https://medium.com/@ngengesenior/database-structure-of-one-to-one-chat-app-with-firebase-93f813184dfe
+- https://openclassrooms.com/en/courses/5086986-create-a-scalable-and-powerful-backend-for-android-using-firebase-in-java/5769301-improve-user-management-with-firestore
+- IMPORTANT TUTORIALS FOR FIREBASE
+- https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
+- https://android.jlelse.eu/android-architecture-components-with-firebase-907b7699f6a0
+- In kotlin but the theory for extending livedata is the same https://medium.com/@lgvalle/firebase-viewmodels-livedata-cb64c5ee4f95
+- Cloud Firestore LiveData<QuerySnapshot> https://stackoverflow.com/questions/49798814/android-architecture-components-with-firebase-specifically-firestore
+- FCM
+	- https://blog.usejournal.com/send-device-to-device-push-notifications-without-server-side-code-238611c143
+
 <------------------ARCHITECTURE--------------->
 
 - MODERN APP ARCHITECTURE USING MVVM AND ARCHITECTURE COMPONENTS
@@ -230,7 +400,6 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- Clean Architecture https://medium.com/@dmilicic/a-detailed-guide-on-developing-android-apps-using-the-clean-architecture-pattern-d38d71e94029
 	- 5 Part Architecture tutorial to build an app, sadly in Kotlin https://www.baruckis.com/android/kriptofolio-app-series/
 	- Another good readup about architecture https://medium.com/androiddevelopers/google-i-o-2018-app-architecture-and-testing-f546e37fc7eb
-	- MVP Pattern https://android.jlelse.eu/architectural-guidelines-to-follow-for-mvp-pattern-in-android-2374848a0157
 	- Single Source of Truth https://medium.com/@develop.rahimi95/single-source-of-truth-with-mvvm-retrofit2-livedata-rxjava-and-room-in-repository-pattern-f5304f39175
 	- Long text but maybe worth it https://www.wintellect.com/model-view-viewmodel-mvvm-explained/
 	- Combining everything in one for efficient MVVM https://medium.com/@saquib3705/consuming-rest-api-using-retrofit-library-with-the-help-of-mvvm-dagger-livedata-and-rxjava2-in-67aebefe031d
@@ -238,31 +407,43 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- https://android.jlelse.eu/android-mvvm-with-dagger-2-retrofit-rxjava-architecture-components-6f5da1a75135
 	- https://android.jlelse.eu/architecture-components-mvp-mvvm-237eaa831096
 	- https://proandroiddev.com/our-way-to-mvvmi-and-mistakes-we-made-when-implementing-mvvm-5f5448b5ad50
+	- MVP Pattern https://android.jlelse.eu/architectural-guidelines-to-follow-for-mvp-pattern-in-android-2374848a0157
+	- https://medium.com/mindorks/understanding-clean-code-in-android-ebe42ad89a99
+	- https://proandroiddev.com/android-architecture-d7405db1361c
+	- Simple MVVM Example with RxJava, offline-first design pattern and repository https://old.reddit.com/r/androiddev/comments/8x1fu1/where_to_learn_mvvm_from_scratch/e21gs76/
 
 LIVE DATA
-	- https://proandroiddev.com/why-should-you-wrap-livedata-with-your-own-abstraction-e738d94cc745
 	- https://medium.com/@Strk7/the-gentle-guide-to-livedata-2833eee97bd5
 	- https://medium.com/androiddevelopers/viewmodels-and-livedata-patterns-antipatterns-21efaef74a54
+	- https://proandroiddev.com/why-should-you-wrap-livedata-with-your-own-abstraction-e738d94cc745
+	- https://medium.com/@begalesagar/observe-livedata-from-viewmodel-in-fragment-fd7d14f9f5fb
+
+ROOM
+	- https://medium.com/@FizzyInTheHall/converting-types-with-room-and-kotlin-9ee45da5e3ac
 
 ARCHITECTURE COMPONENTS
 	- Data binding support
 	- WorkManager
+		- https://medium.freecodecamp.org/how-to-make-googles-work-manager-work-for-you-225343ea06cf
 	- Paging
 	- Jetpack https://developer.android.com/jetpack/#architecture-components
+	- Room
+		- https://itnext.io/android-room-persistence-library-using-the-delegate-pattern-to-update-the-ui-after-a-database-31475ce158f1
 
 <--------------------THEORY--------------->
 
 SOFTWARE ENGINEERING THEORY
 + https://en.wikipedia.org/wiki/Observer_pattern
-- https://en.wikipedia.org/wiki/Factory_method_pattern
 - https://en.wikipedia.org/wiki/Separation_of_concerns
+- https://en.wikipedia.org/wiki/Plain_old_Java_object
 - https://en.wikipedia.org/wiki/Data_access_object
+- https://en.wikipedia.org/wiki/Factory_method_pattern
 - https://en.wikipedia.org/wiki/Dependency_injection 
+- https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern
 - SOLID Principles https://scotch.io/bar-talk/s-o-l-i-d-the-first-five-principles-of-object-oriented-design#toc-single-responsibility-principle
 - DRY code
 - WET code
 - https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel
-- https://en.wikipedia.org/wiki/Plain_old_Java_object
 - https://en.wikipedia.org/wiki/Race_condition
 - https://hackernoon.com/top-10-system-design-interview-questions-for-software-engineers-8561290f0444
 - Computer Science problems
@@ -272,6 +453,14 @@ SOFTWARE ENGINEERING THEORY
 	- https://www.thedroidsonroids.com/blog/design-patterns-in-android-builder
 - https://en.wikipedia.org/wiki/5_Whys
 - https://codeburst.io/software-architecture-the-difference-between-architecture-and-design-7936abdd5830
+- Continuous Improvement Principles
+- Big Data
+- https://en.wikipedia.org/wiki/Representational_state_transfer
+- Microservices
+- Serverless architecture
+- Microservices Serverless architecture
+- TDD
+	- https://medium.com/javascript-scene/tdd-changed-my-life-5af0ce099f80
 
 <------------------JAVA STUFF TO LEARN----------------->
 
@@ -284,31 +473,43 @@ SOFTWARE ENGINEERING THEORY
 
 <-------------------ANDROID SDK STUFF----------------->
 
-- Services
+- Background Services
 - IntentServices https://developer.android.com/reference/android/app/IntentService.html
 - Content Providers
 - Broadcast Receivers
+- PrecomputedText
 
 <------------------WEB SERVICES/REST API-------------->
 
 - Learn RetroFit to handle REST API
 	+ https://zeroturnaround.com/rebellabs/getting-started-with-retrofit-2/
-	- 2019 tutorial with a lot of stuff to learn https://www.vogella.com/tutorials/Retrofit/article.html 
-	- Retrofit Error Response combined with MVVM and Repository, good source code to follow https://medium.com/@sriramr083/error-handling-in-retrofit2-in-mvvm-repository-pattern-a9c13c8f3995
-	- https://guides.codepath.com/android/consuming-apis-with-retrofit
+	+ 2019 tutorial with a lot of stuff to learn https://www.vogella.com/tutorials/Retrofit/article.html 
+	+ https://guides.codepath.com/android/consuming-apis-with-retrofit
 	- https://futurestud.io/tutorials/retrofit-2-creating-a-sustainable-android-client
+	- https://medium.com/@tsaha.cse/advanced-retrofit2-part-1-network-error-handling-response-caching-77483cf68620
+	- Retrofit Error Response combined with MVVM and Repository, good source code to follow https://medium.com/@sriramr083/error-handling-in-retrofit2-in-mvvm-repository-pattern-a9c13c8f3995
+	- OkHttp Library
 - Android RESTful https://android.jlelse.eu/rest-api-on-android-made-simple-or-how-i-learned-to-stop-worrying-and-love-the-rxjava-b3c2c949cad4
 
 <----------------RxJava AND Reactive Programming---------------------->
 
 - RxJava
+	- Start here https://ayusch.com/the-complete-rxjava-roadmap/
+	- https://codingwithmitch.com/courses/rxjava-rxandroid-for-beginners/
+	- https://blog.danlew.net/2014/09/15/grokking-rxjava-part-1/
+	- https://www.youtube.com/watch?v=htIXKI5gOQU
+	- https://www.youtube.com/watch?v=0IKHxjkgop4
 	- https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
-	- Learn about Observable class
+	- https://android.jlelse.eu/be-reactive-develop-your-next-app-with-rxjava-4f00bfde0020 3 parts
+
 
 <----------------DEPENDENCY INJECTION---------------------->
 
-- What is injector in programming, Inject et cetera
+- STARTING POINT
+	- https://www.youtube.com/watch?v=ZZ_qek0hGkM&list=PLrnPJCHvNZuA2ioi4soDZKz8euUQnJW65
+	- https://www.youtube.com/watch?v=3qZh6Fyrz-k&list=PLgCYzUzKIBE8AOAspC3DHoBNZIBHbIOsC
 - Learn Dagger 2 to do Dependency Injection to reduce redundant code when using architecture patterns and repository pattern
+	- https://android.jlelse.eu/basics-of-dependency-injection-for-dummies-b844d642e174
 	- https://android.jlelse.eu/practical-guide-to-dagger-76398948a2ea
 	- https://blog.mindorks.com/a-complete-guide-to-learn-dagger-2-b4c7a570d99c
 	- https://proandroiddev.com/dagger-2-on-android-the-simple-way-f706a2c597e9
@@ -316,7 +517,12 @@ SOFTWARE ENGINEERING THEORY
 	- https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
 	- https://medium.com/@princessdharmy/dagger-2-with-mvvm-simplified-3215b3cf4c96
 	- Dagger and Retrofit https://inducesmile.com/android/android-dagger-2-dependency-injection-with-retrofit-for-beginners/
+	- https://android.jlelse.eu/7-steps-to-implement-dagger-2-in-android-dabc16715a3a
+	- http://www.digigene.com/design-patterns/dependency-injection-coffeeshop/
+	- https://medium.com/@Zhuinden/that-missing-guide-how-to-use-dagger2-ef116fbea97
+	- https://proandroiddev.com/dagger-and-the-shiny-new-component-factory-c2234fcae6b1
 - Koin, new and trendy alternative to Dagger2 Dependency injection 
+	- https://caster.io/courses/koin
 	- https://adevait.com/blog/best-practices/easy-dependency-injection-in-android-with-koin/?__s=xxxxxxx
 	- https://medium.com/@farshidabazari/android-koin-with-mvvm-and-retrofit-e040e4e15f9d
 	- https://blog.usejournal.com/koin-as-an-alternative-to-dagger-2-a03e082a1c57
@@ -328,18 +534,29 @@ SOFTWARE ENGINEERING THEORY
 
 <----------------OTHER------------------------------>
 - Lint
-	- https://medium.com/@intelia/getting-the-most-out-of-android-lint-6df05a7ab054
+	+ https://infinum.co/the-capsized-eight/what-is-android-lint-and-how-helps-write-maintainable-code?__s=npakz7kzrv2bdnbsaeyp
+	+ https://medium.com/@intelia/getting-the-most-out-of-android-lint-6df05a7ab054
 - Modules
 	- https://proandroiddev.com/modular-way-of-building-android-apps-500ac816825
 - Amazon Web Services (AWS)
+- Google Cloud
+- Heroku
 - Gradle
 - ProGuard
 - How to create secure project and ensure security?
-- Best way to set up payment via Paypal? 
+- Payments
+	- Via paypal
+	- Stripe
+		- https://medium.com/devmins/stripe-implementation-payment-gateway-integration-postman-collection-ded68a115667
 - Application
 	- https://medium.com/@balakrishnan.750/android-application-class-a8a1d64c82d1
 	- https://github.com/codepath/android_guides/wiki/Understanding-the-Android-Application-Class
 	- https://stackoverflow.com/questions/45903111/android-extending-application-class-why-do-we-need-to-implement-singleton-patt
+- TensorFlo
+- Machine Learning
+	- https://medium.com/flutter-community/flutter-mlkit-8039ec66b6a
+- Firebase ML Kit
+- Parse cloud back end
 
 LIBRARIRES
 - Bubble Navigation 								https://github.com/gauravk95/bubble-navigation
@@ -348,31 +565,47 @@ LIBRARIRES
 - Best Android Chart 								https://github.com/PhilJay/MPAndroidChart
 - ErrorActivity Library 							https://github.com/TutorialsAndroid/crashx 
 - Airbnb Advanced RecyclerView 						https://github.com/airbnb/epoxy 
-- Display what libraries your app is using 			https://github.com/codekidX/osslib-android?__s=npakz7kzrv2bdnbsaeyp 
+- Display what libraries your app is using 			https://github.com/codekidX/osslib-android?__s=npakz7kzrv2bdnbsaeyp
+- Material Design Banner							https://github.com/sergivonavi/MaterialBanner 
+- Material Search View 								https://github.com/MiguelCatalan/MaterialSearchView
+- Country Code Picker								https://github.com/hbb20/CountryCodePickerProject
+- Pager 											https://github.com/Pradyuman7/Pager?__s=npakz7kzrv2bdnbsaeyp
+
+	CODE INJECTION
+	Butterknife										http://jakewharton.github.io/butterknife/
+	Parceler 										https://github.com/johncarl81/parceler
 
 DESIGN EXAMPLES
+- https://www.uplabs.com/
+- https://dribbble.com/
 - http://androidniceties.tumblr.com/ 
 - Android Design Patterns as examples https://pttrns.com/android-patterns?srtby=popularity_desc
+- ConstraintLayout Examples https://github.com/googlesamples/android-ConstraintLayoutExamples
 - https://www.uplabs.com/ Daily assets for designers and developers
 - UI Design Tips https://developer.android.com/guide/topics/ui
 	ARTICLES
 		- https://www.tamoco.com/blog/mobile-app-design-ux-ui-engagement/?utm_source=It%27s+an+app%27s+world&utm_campaign=925c89be8a-It%27s+an+app%27s+world+-+April&utm_medium=email&utm_term=0_57042b68ef-925c89be8a-114714559
 		- https://uxdesign.cc/the-power-of-good-user-interface-and-how-it-enhances-engagement-the-new-currency-in-the-digital-43a59bcd9bda
+		- https://uxdesign.cc/heuristic-principles-for-mobile-interfaces-c226fbaa1d16?ref=uxdesignweekly
+
+- 700+ ICONS https://tilda.cc/free-icons/?ref=androidweekly
 
 USEFUL WEBSITES
 - https://jsonformatter.curiousconcept.com/ Can list JSON into trees and hide it
 - http://www.jsonschema2pojo.org/ AMAZING WEBSITE that lets you generate POJO for specific deserializer like GSON or Jackson
+
 BIG TUTORIAL WEBSITES
 - https://codinginflow.com/tutorials/android
 - https://android.jlelse.eu/learning-android-development-in-2018-part-1-83a514f6a205
-
-FLUTTER
-- Beginning point https://ayusch.com/flutter/
-- More beginner stuff https://fluttercrashcourse.com/
+- https://guides.codepath.com/android
+- https://android.jlelse.eu/android-developer-roadmap-for-2019-14eacb0d0a2 WHAT TO LEARN IN 2019
 
 KOTLIN
+- https://classroom.udacity.com/courses/ud9011
+- https://github.com/Zhuinden/guide-to-kotlin/wiki
 - https://medium.com/@renaudcerrato/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7
 - https://medium.com/@marco_cattaneo/walking-with-kotlin-firsts-steps-c7ebcc182c96
+- https://android.jlelse.eu/switching-from-java-to-kotlin-5-exciting-features-for-android-developers-49ce712a546
 - MVVM FOR KOTLIN VERY GOOD https://resocoder.com/2018/09/07/mvvm-on-android-crash-course-kotlin-android-architecture-components/ 
 - https://www.raywenderlich.com/android/learn
 - RxJava + Kotlin https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
@@ -384,6 +617,7 @@ WAYS HOW TO APPROACH DEVELOPMENT OR OTHER IDEAS HOW TO DEVELOP A BETTER, EFFICIE
 PERFORMANCE
 - https://developer.android.com/studio/build/optimize-your-build.html
 - https://medium.com/androiddevelopers/improving-build-speed-in-android-studio-3e1425274837
+- Convert PNG to WebP https://www.youtube.com/watch?v=LGoKUXNZxoA
 
 NAMING CONVENTIONS
 - https://github.com/ribot/android-guidelines/blob/master/project_and_code_guidelines.md
@@ -400,26 +634,61 @@ SOFTWARE RELATED ARTICLES TO READ
 - https://medium.com/@lewisdgavin/building-a-cardio-tracking-app-for-android-1f33935f924d
 - https://blog.aritraroy.in/what-my-2-years-of-android-development-have-taught-me-the-hard-way-52b495ba5c51
 - https://opensource.guide/how-to-contribute/
+- https://medium.com/s/story/notes-to-myself-on-software-engineering-c890f16f4e4d
+- https://medium.com/@stephanie.a.coy/a-quick-introduction-to-some-refactoring-techniques-7be74a8ad017
+- https://medium.com/swlh/critical-soft-skills-for-software-developers-6845545f6dbd
+- https://medium.freecodecamp.org/leading-innovation-in-engineering-teams-ca9890bcad7c
+- https://medium.freecodecamp.org/learn-the-fundamentals-of-a-good-developer-mindset-in-15-minutes-81321ab8a682
 
 - Some advanced stuff https://medium.com/@vardaansh1/an-introduction-to-android-interprocess-communication-and-common-pitfalls-ac4dfeddf89b
 
 NON-SOFTWARE RELATED ARTICLES TO READ
 + https://medium.com/s/youthnow/what-its-like-to-be-90-something-368780082573
-- https://medium.com/s/reasonable-doubt/a-guide-to-changing-someone-elses-beliefs-c08fc1cb956b
-- https://betterhumans.coach.me/cognitive-journaling-a-systematic-method-to-overcome-negative-beliefs-119be459842c
-- https://medium.com/s/story/the-male-leadership-traits-that-encourage-bad-leaders-acc4b2886aee
-- https://medium.com/s/the-nuance/is-sharing-your-feelings-always-healthy-a6be3579c4ae
++ https://medium.com/s/reasonable-doubt/a-guide-to-changing-someone-elses-beliefs-c08fc1cb956b
++ https://onezero.medium.com/is-social-media-the-new-smoking-c65c6081687d Great article about social media dangers, thank god, people are getting aware of the damages of it
++ https://blog.usejournal.com/dear-entry-level-android-developers-you-dont-need-to-know-rxjava-to-get-a-job-a985b964674
++ https://medium.com/@samgrittner/one-year-sober-697c81689444
++ https://medium.com/s/story/the-male-leadership-traits-that-encourage-bad-leaders-acc4b2886aee
++ https://medium.com/s/the-nuance/is-sharing-your-feelings-always-healthy-a6be3579c4ae
++ https://medium.com/s/office-politics/the-everything-guide-to-being-the-new-employee-524da4d27682
 - https://betterhumans.coach.me/habit-building-self-awareness-exercises-to-keep-yourself-accountable-9a814c0c761d
 - https://betterhumans.coach.me/how-to-manage-your-fear-of-public-speaking-92964d531147
 - https://medium.com/s/office-politics/4-strategies-for-managing-someone-older-than-you-c6112815c36b
 - https://onezero.medium.com/browser-tabs-are-ruining-your-brain-ccf4151b845b
 - https://medium.com/s/futurehuman/were-in-a-crisis-of-the-heart-70852fa48b49
+- https://betterhumans.coach.me/cognitive-journaling-a-systematic-method-to-overcome-negative-beliefs-119be459842c
 - https://medium.com/s/teamhuman/investing-in-community-with-charles-hugh-smith-448ec19fde22
 - https://medium.com/s/story/i-cured-my-social-media-addiction-by-reading-books-9376c3025079
-- https://medium.com/@samgrittner/one-year-sober-697c81689444
 - https://medium.com/s/buy-yourself/the-end-of-authenticity-bd858bc3b413
 - https://medium.com/s/story/your-productivity-hinges-on-how-you-arrange-your-desk-6b278f018daf
 - https://medium.com/conquering-corporate-america/36-signs-you-pulled-this-presentation-together-at-the-last-minute-445ea8912899
+- https://medium.com/@anthonydraper/how-to-prioritize-your-tasks-61b56ea3019f
+- https://medium.com/@nallsopp_/how-to-rebalance-your-time-for-the-important-things-in-life-55b25346e0f7
+- https://medium.com/datadriveninvestor/should-you-build-a-minimum-viable-product-367a2f4ff972
+- https://medium.com/xplor8/design-thinking-lean-startup-and-agile-what-is-the-difference-1eed3594b121
+- https://betterhumans.coach.me/how-to-make-the-power-of-your-subconscious-mind-work-for-you-295701128db4
+- https://medium.com/@mialoira/how-to-scale-yourself-as-a-creative-leader-93ce8a22a55c?ref=uxdesignweekly
+- https://creativestrategies.com/consumer-study-app-discovery-downloading-and-purchasing/?utm_campaign=iOS%2BDev%2BWeekly&utm_medium=email&utm_source=iOS%2BDev%2BWeekly%2BIssue%2B386&utm_source=It%27s+an+app%27s+world&utm_campaign=925c89be8a-It%27s+an+app%27s+world+-+April&utm_medium=email&utm_term=0_57042b68ef-925c89be8a-114714559
+- https://medium.com/the-atlantic/the-coming-software-apocalypse-4ffb43f3b288
+- https://medium.com/s/story/strategies-to-pull-yourself-out-of-a-bad-mood-db31d5709fff
+- https://medium.com/s/please-advise/the-essential-guide-to-difficult-conversations-41f736e63ccf
+- https://betterhumans.coach.me/coffee-time-out-34eafb198c73
+- https://productcoalition.com/the-art-of-the-strategic-product-roadmap-c881f261b4eb
+- https://medium.com/s/story/dear-founder-maynard-webb-advice-excerpt-letter-to-a-would-be-entrepreneur-baeb0235ab88
+- https://medium.com/s/story/to-make-your-business-more-efficient-take-a-lesson-from-bee-colonies-7c5ffd0ba4c5
+- https://elemental.medium.com/how-im-preparing-for-the-dementia-i-believe-i-ll-get-9bf265816792
+- https://elemental.medium.com/why-stravas-ceo-doesn-t-work-evenings-or-weekends-a72093618711
+- https://onezero.medium.com/the-death-of-boredom-3001a24dc709
+- https://elemental.medium.com/strategies-for-self-care-that-really-work-1b3d6ca514a
+- https://medium.com/swlh/the-power-of-saying-less-5bbf5ecf5e73
+- https://medium.com/s/story/in-defense-of-intoxication-f38c7a52af68
+- https://elemental.medium.com/the-easier-way-to-do-intermittent-fasting-9a9c60ba2e96
+- https://medium.com/s/story/meet-nosurf-the-self-help-group-that-told-us-to-log-off-before-it-was-cool-4ff14516f8fb
+- https://elemental.medium.com/can-unproven-health-rituals-help-you-get-well-e20b8c488847
+- https://medium.com/s/grow-it-alone/leaving-isnt-failing-d41d656b20b0
+- https://medium.com/innovation-machine/is-it-a-prototype-or-an-mvp-well-its-a-proof-of-concept-f8df5bb8940a
+- https://medium.com/s/story/a-broke-millennial-guide-to-investing-if-you-have-student-loans-e4428f9e917f
+- https://medium.com/@jproco/what-i-learned-each-time-my-startups-got-acquired-b6be1fa407bc
 
 Android Interview Questions and Topics to know
 	- https://www.reddit.com/r/androiddev/comments/36hkf0/android_internships_and_junior_dev_positions/

@@ -411,6 +411,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- https://medium.com/mindorks/understanding-clean-code-in-android-ebe42ad89a99
 	- https://proandroiddev.com/android-architecture-d7405db1361c
 	- Simple MVVM Example with RxJava, offline-first design pattern and repository https://old.reddit.com/r/androiddev/comments/8x1fu1/where_to_learn_mvvm_from_scratch/e21gs76/
+	- Android Architecture Diagrams https://www.techyourchance.com/architecture-diagrams-android-applications/
 
 LIVE DATA
 	- https://medium.com/@Strk7/the-gentle-guide-to-livedata-2833eee97bd5

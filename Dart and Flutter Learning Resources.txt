@@ -1,35 +1,140 @@
-Dart/Flutter Learning Resources.txt
-
 /*
-* <-----------------------------NOTES ABOUT THINGS I LEARN----------------------------->
+* <-----------------------------NOTES ABOUT DART LANGUAGE----------------------------->
+*/
+1. dynamic variable automatically converts variable type. Let's say dynamic a = 55; a = "hey" so a was converted from int to String
+2. When interpolating strings, I use ${varName} inside the quotes or "text " + myNum.toString() or add numbers like this, it MUST be a string outside of quotes
+3. CONST is initialized during compilation and FINAL is initialized whenever it is created/accessed first!
+4. To define a list use this: var list = [1, 2, 3]. To insert other list content into new list, use spread operator - 
+var list1 = [5, 10, ...?list]; Question mark automatically checks if the list is not null
+5. Before inserting something in a new list, I can make an if statement inside var items = ['one', 'two', if(check) 'three'];
+6. Sets are unordered collections. Two ways to define var mSet = {"a", "b", "c"} (Set<String>) or var mSet = <String>(); Set is similar to ArrayList of Java except it does not have an index or how to retrieve one individual item by array index 
+7. Maps have key and value. var measurementData = {"co2_value" : 500, "hum_value" : 66, "temp_value" : 25}; This is Map<String, String>. Map can be initialized like this var myMap = Map(); myMap["first"] = "firstElement"; print(myMap["first"]);
+8. Functions are also Objects and can be assigned to variables and passed in a function arguments like this lists.forEach(myFunctionThatPrintsElements)
+9. To compare classes use as is is!. if (Employee is Person) {//do this...} 
+10. Cascade - String s = "hello"; s..toLowerCase()..toUpperCase()..anoterMethod().. Cascade does not work on void methods
+11. p?.y = 4; Before setting value of 4 to p it checks if p is not null
+12. You can define multiple constructors and name them. class Point{
+	num x, y;
+	Point(this.x, this.y); 	//Syntactic sugar for constructor
+	Point.origin(){ 		//Constructor with additional name origin
+		x = 0;
+		y = 0;
+	}
+}
+13. To specify superclass constructor write like this Employee.constructor(String name) : super.constructor(name) {
+	print('Name: ${name}');
+}
+14. It is possible to initialize variables before even the constructor runs Point.constructor(String[] points) : x = points[0], y = points[1];
+15. Getters and setters num get getX => x; set setX(num value) => left = value - width;
+16. When expanding lambda, not semi colon is needed to end statement, but ','. set right(num value) => {left = value - width, left++};
+17. enum Color {red, green, blue} enumeration index starts at zero, so red.index == 0; To get a list from enum - List<Color> colors = Color.values;
+18. Mixin classes are reusable classes. Can define which superclass is required - mixin MusicalPerformer on Musician {...}
+19. Static variables are not initialized until they are used! ;o
+20. When defining var list = []; it actually contains List<dynamic>
+21. Type inference happens only when you initialize the variable, you can not change the type during the runtime
+22. class Foo<T extends SomeBaseClass> this allows Foo class to extend ONLY classes that have extended SomeBaseClass!!!!
+23. You can lazily load libraries when library method is requested thus reducing app's initial startup time ;o
+24. Async example that returns a string - Future<String> lookUpVersion() async => "1.0.0";
+25. Ternary Operators: a > b ? a-- : b--;
+26. You can assign loop to a name like this and inside of the loop break on condition: loop: for(String s : stringList) {if (s == "hi") break loop;}
+27. Functions
+	- Optional Positional Parameter in Function printCountries(String s1, [String s2, String s3]); s2 and s3 can be ignored with [] brackets 
+	- Named Function Parameters - intFindVolume(int a, {int b, int c}) findVolume(10, c: 20, b: 30); Sequence does not matter with named parameters
+	- Default Parameters - int findVolume(int a, int b, {int c = 20});
+28. int a = 12 / 4; gives an error that result potentially can return double, to fix it use '~'. int a = 12 ~/ 4;
+29. Exceptions. 
+	- ON Clause - is used when you know what exception to expect try {... statments} on IntegerDivisionByZeroException {... on error occurance}
+	- Catch clause - is used when you do not know what exception you can catch try {...} catch(e, s) {print("Exception $e Stacktrace $s")}
+	- Finally clause - is always executed no matter if exception occurs or not! 
+	- Custom exception - Create a class that implements Exception, create a Stringe errorMessage() and when exception is caught call this message
+	- Uncaught Exception - Just write throw "Can not create a circle!"; and it will throw an exception
+30. var _name in a class will be defined as a private variable
+31. String interpolation does not require '+' symbol e.g print('a' 'i' 'n' 'i' 's'); would print ainis
+32. Factory - You can define it in abstract class that helps you have a one place where you can initialize abstract class children by calling Shape constructor.
+33. Non-Null String name = null; String myName = name ?? "Guest My Name"; If name is null then return Guest my name, else return null. ?? checks for null
+34. Singleton Pattern class DBProvider { DBProvider._(); // Static object to provide us access from practically anywhere
+    static final DBProvider db = DBProvider._();
+    ...
+    } 
+/*
+* <-----------------------------NOTES ABOUT FLUTTER FRAMEWORK----------------------------->
 */
 
-/*
 * <-----------------------------LEARNING PLAN----------------------------->
 */
 
-1. Dart 2.2 Language Tour https://www.dartlang.org/guides/language/language-tour
++ Dart 2.3 Language Tour https://www.dartlang.org/guides/language/language-tour
++ Effective Dart Conventions https://dart.dev/guides/language/effective-dart
+	+ Style Guide
+	+ Documentation Guide
+	- Usage Guide
+	- Design Guide
++ https://dart.dev/guides/language/sound-dart
++ 30s Dart Tutorials https://www.youtube.com/watch?v=KsXQnpgY2Jc&list=PL3UwowPBo8XGjfIqUG2Nn01MovtbkUhYy
 2. YouTube Tutorials https://www.youtube.com/watch?v=5rtujDjt50I&list=PLlxmoA0rQ-LyHW9voBdNo4gEEIh0SjG-q&index=1
-3. Intro to Dart for Java Developers https://codelabs.developers.google.com/codelabs/from-java-to-dart/index.html?index=..%2F..index#0
-3.1 https://blog.usejournal.com/beginning-programming-with-dart-beginners-3f0348d8baf8
-4. First Flutter App Part 1 https://flutter.dev/docs/get-started/codelab
-5. First Flutter App Part 2 https://codelabs.developers.google.com/codelabs/first-flutter-app-pt2/#0
++ Intro to Dart for Java Developers https://codelabs.developers.google.com/codelabs/from-java-to-dart/index.html?index=..%2F..index#0
++ https://blog.usejournal.com/beginning-programming-with-dart-beginners-3f0348d8baf8
++ Part 2 https://blog.usejournal.com/intermediate-programming-with-dart-a4b981a1a552
+FLUTTER CODELABS https://flutter.dev/docs/codelabs
++ First Flutter App Part 1 https://flutter.dev/docs/get-started/codelab
++ First Flutter App Part 2 https://codelabs.developers.google.com/codelabs/first-flutter-app-pt2/#0
 6. First Flutter Widget https://www.youtube.com/watch?v=W1pNjxmNHNQ
+6.1 Flutter Layouts https://flutter.dev/docs/development/ui/layout
+6.2 Flutter Interactivity https://flutter.dev/docs/development/ui/interactive
+6.3 Flutter Widget Intro https://flutter.dev/docs/development/ui/widgets-intro
 7. Flutter for Android Developers https://flutter.dev/docs/get-started/flutter-for/android-devs
 8. Flutter for Junior Devs https://fluttercrashcourse.com/courses/juniordevs
 9. Flutter The Basics https://fluttercrashcourse.com/courses/basics
 10. Flutter 10 Minute Tutorials https://fluttercrashcourse.com/courses/flutter-ten-minutes
 11. Building Beautiful UI with Flutter https://codelabs.developers.google.com/codelabs/flutter/#0
 12. Firebase for Flutter https://codelabs.developers.google.com/codelabs/flutter-firebase/#0
+13. Youtube Tutorial https://www.youtube.com/playlist?list=PLlxmoA0rQ-Lw6tAs2fGFuXGP13-dWdKsB
+14. Flutter Cookbook- https://flutter.dev/docs/cookbook
+15. All other codelabs
+16. Widgets https://www.youtube.com/playlist?list=PLOU2XLYxmsIJyiwUPCou_OVTpRIn_8UMd
+17. Flutter in Practice https://www.youtube.com/watch?v=MbUey9oquuU&list=PLhXZp00uXBk5TSY6YOdmpzp1yG3QbFvrN
 
+DART
+14. Library Tour https://dart.dev/guides/libraries/library-tour
+15.1 Futures https://dart.dev/tutorials/language/futures
+15.2 Streams https://dart.dev/tutorials/language/streams
+15. https://flutter.dev/docs/resources/bootstrap-into-dart
++ https://itnext.io/learn-dart-before-you-flutter-d1c0be6cf892
+17. Dart Server-side Framework https://www.youtube.com/watch?v=vvDomA-ru3E&list=PL3UwowPBo8XEDvDDY7fpurOLt7hhYMBlx
+18. Dart Server Side App https://dart.dev/tutorials/server/httpserver
+19. Another Dart Server Side tutorial https://dart-lang.github.io/server/
+20. AngularDart https://itnext.io/angulardart-tutorial-lets-build-a-bookmark-manager-part-1-67327fbb7e3d
+https://dart.dev/tutorials
+
+Dart Sound Problems https://dart.dev/guides/language/sound-problems
+Async Part 1 https://news.dartlang.org/2016/03/unboxing-packages-async-part-1.html
+Async Part 2 https://news.dartlang.org/2016/03/unboxing-packages-async-part-2.html
+Async Part 3 https://news.dartlang.org/2016/04/unboxing-packages-async-part-3.html
+Unboxing Collections https://news.dartlang.org/2016/01/unboxing-packages-collection.html
+Creating Streams https://dart.dev/articles/libraries/creating-streams
+Introduction to dart:io package https://dart.dev/articles/libraries/dart-io
+https://codingwithjoe.com/dart-fundamentals-async-await/
+https://codingwithjoe.com/dart-fundamentals-isolates/
+Dart Mixins https://github.com/dart-lang/language/blob/master/accepted/2.1/super-mixins/feature-specification.md#dart-2-mixin-declarations
+More about Mixins https://medium.com/flutter-community/dart-what-are-mixins-3a72344011f3
+Dart Generic Methods https://github.com/dart-lang/sdk/blob/master/pkg/dev_compiler/doc/GENERIC_METHODS.md
+Dart Lesser Known Fetaures https://github.com/dart-lang/sdk/blob/master/docs/newsletter/20170915.md#synchronous-async-start
+Dart Language Specifications https://dart.dev/guides/language/spec
+
+Dart Web Scraping https://creativebracket.com/write-your-first-web-scraper/
+Dart Backend With Firebase https://github.com/FirebaseExtended/firebase-dart
+
+Flutter & Firebase Course https://fireship.io/courses/
 
 /*
 * <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
 */
 
-
 <-----------DART LANGUAGE-------------->
+- Dart Cheat Sheet https://dart.dev/codelabs/dart-cheatsheet
+- https://dart.academy/
 - https://medium.com/flutter-community/simple-and-bug-free-code-with-dart-operators-2e81211cecfe
+- Singleton Code Snippet using Factory https://gist.github.com/theburningmonk/6401183
 
 <-----------APP ARCHITECTURE----------->
 Bloc
@@ -38,15 +143,36 @@ Bloc
 	- https://medium.com/flutterpub/architecting-your-flutter-project-bd04e144a8f1 
 	- https://medium.freecodecamp.org/how-to-handle-state-in-flutter-using-the-bloc-pattern-8ed2f1e49a13
 	- Block & RxDart https://medium.com/flutter-community/why-use-rxdart-and-how-we-can-use-with-bloc-pattern-in-flutter-a64ca2c7c52d
+	- https://medium.com/flutterpub/effective-bloc-pattern-45c36d76d5fe
+	- https://medium.com/free-code-camp/using-streams-blocs-and-sqlite-in-flutter-2e59e1f7cdce
+	- https://medium.com/coding-with-flutter/widget-async-bloc-service-a-practical-architecture-for-flutter-apps-250a28f9251b
 Redux
 	- Flutter + Redux App Architecture https://hackernoon.com/flutter-redux-how-to-make-shopping-list-app-1cd315e79b65
 	- https://hillel.dev/2018/08/24/ongoing-adventures-with-flutter-and-redux/
+Provider
+	- https://medium.com/flutter-community/flutter-pragmatic-state-management-using-provider-5c1129f9b5bb
+	- https://medium.com/flutter-community/flutter-statemanagement-with-provider-ee251bbc5ac1
+
+RxVMS
+	- https://www.burkharts.net/apps/blog/rxvms-a-practical-architecture-for-flutter-apps/
 
 - https://hillel.dev/2018/08/10/an-architectural-review-of-the-invoice-ninja-flutter-app/
 - https://medium.com/flutter-community/let-me-help-you-to-understand-and-choose-a-state-management-solution-for-your-app-9ffeac834ee3
 - https://medium.com/flutter-community/flutter-oneyearchallenge-scoped-model-vs-bloc-pattern-vs-states-rebuilder-23ba11813a4f
 - https://medium.com/@dsrenesanse/flutter-architecture-pattern-vms-43c2defec03a
 - https://medium.com/filledstacks/flutter-architecture-scopedmodel-a-complete-guide-to-a-real-world-setup-56501747e179
+- https://medium.com/flutter-community/flutter-architecture-scopedmodel-a-complete-guide-to-real-world-architecture-205a24674964
+- https://medium.com/flutter-community/flutter-code-organization-de3a4c219149
+- https://medium.com/flutter-community/flutter-app-architecture-101-vanilla-scoped-model-bloc-7eff7b2baf7e
+- https://medium.com/@c_innovative/simple-firebase-login-flow-in-flutter-6f44c2b5c58a
+
+<-----------LIBRARIES-------------->
+- Server-side HTTP server framework to expose web api with Dart https://github.com/stablekernel/aqueduct
+
+<-----------TOOLING-------------->
+- CI/CD for Flutter https://blog.codemagic.io/
+- Animating for Flutter https://www.2dimensions.com/
+- Play Store Quality Screenshot Maker https://app-mockup.com/
 
 <-----------Articles----------->
 
@@ -55,7 +181,19 @@ Articles
 	- https://medium.com/@michael.krol/simple-recipes-app-made-in-flutter-introduction-c80964167a19
 	- https://medium.com/@studymongolian/simple-sqflite-database-example-in-flutter-e56a5aaa3f91
 	- https://medium.com/@dev.n/flutter-challenge-todo-app-concept-bd36107aa291
+	- https://hackernoon.com/what-it-was-like-to-write-a-full-blown-flutter-app-330d8202825b
+	- https://medium.com/flutter-io/managing-visibility-in-flutter-f558588adefe
+	- https://medium.com/flutter-community/a-guide-to-using-futures-in-flutter-for-beginners-ebeddfbfb967
+	- https://www.reddit.com/r/FlutterDev/comments/btuod4/less_boilerplate_code_in_flutter_using_functional/
+	- https://www.filledstacks.com/snippet/futures-in-flutter-for-beginners/
+	- https://medium.com/aubergine-solutions/creating-a-note-taking-app-in-flutter-dart-f50852993cd0
+	- https://skillsmatter.com/skillscasts/13602-learn-scoped-model-by-building-scoped-model
 
-Websites with tutorials
+Resources
 	- Beginning point https://ayusch.com/flutter/
 	- https://diveintoflutter.blogspot.com/
+	- https://flutterhackathon.com/#getting-started
+	- https://github.com/Solido/awesome-flutter
+	- https://project-awesome.org/yissachar/awesome-dart
+
+

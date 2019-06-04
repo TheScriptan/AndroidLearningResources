@@ -1,0 +1,11 @@
+main() {
+    List values = <num>[1, 2, 4, 5];
+    print(subtract(15, values));
+}
+T subtract<T extends num>(T value, List<T> items){
+    T x = value;
+    items.forEach((values) {
+         x = x - values;
+    });
+    return x;
+} 

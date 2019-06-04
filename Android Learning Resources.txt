@@ -105,6 +105,8 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- ViewModelProvider.Factory overrides create method which is invoked when ViewModel is created when used ViewModelProviders.of(this, factory).get(class.class), by using factory you can create custom constructors for ViewModel classes and initialize repository in a more efficient way, for example using InjectorUtils
 	- ViewModel can also be used to share data between fragments easily
 	- To share data between Fragments and whole app, in fragments don't use this when instantiating ViewModel but use getActivity in ViewModelProvider method
+	- It may be a good practice to have all of the business logic like if, switch statements inside of a viewmodel to handle states and much more, while activities & fragments should only contain widgets and views
+	- When querying for data from repository, before that I can change a state for example for a recyclerview with multiple view types
 31. LiveData
 	- LiveData is an observable data holder. This allows view to observe LiveData without creating rigid dependency paths
 	- By using LiveData with Room or Firebase, I do not need to requery as Room returns LiveData automatically when data is updated and Firebase has listeners which can help posting MutableLiveData and sending to Repository LiveData<RetrievedData>
@@ -116,6 +118,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	 Note: LiveData and it's subclasses contain both a setValue() and a postValue() method. The difference is that setValue() must be called from the main thread. postValue() is for when the call occurs off of the main thread. You'll see why you use postValue() next.
 	 - When attaching observers to LiveData, ensure that LiveData instance isn't changing, because then you need to attach a new observer and that would be bad practice
 	 - When using MVVM with LiveData, try to have MutableLiveData as low as I can in the tiers, for example MutableLiveData should live in Retrofit data source or Room data source
+	 - If I get an error somewhere where MutableLiveData exists, postValue(null) so in the views I could catch the null and react accordingly
 32. Repository pattern in MVVM
 	- Repository class SHOULD have only LiveData and synchronize it from different data sources to create single source of truth in Repository class 
 	- In Repository when initializing data, I should make a boolean value to check if data was initialized in this app's lifetime
@@ -135,9 +138,20 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- To invoke request, use call.enqueue and deserialized object is in onResponse(... Response<List<Contributor> response) response.body();
 	- always use response.isSuccessful() before doing any action on onResponse method
 	- To use LiveData with it, use MutableLiveData, when onResponse is successfull, do mutableLiveData.postValue(response.body());
+	- Let's say I make HTTP GET request of Recipes. First I define Recipe model, then I create RecipeResponse object where I can define List<Recipe> recipeList since Recipe model is defined for Gson converter with SerializedNames and matching attributes to JSOn this should work 
+	- SerializedName and Expose annotation automatically handles the setting so you do not need to define setters in the APIResponse objects
+	- @Query annotation automatically prepends a '?' before the given value. api/search?key=asdfgberer in this case @Query prepended "?key" but this is prepended only when the query begins, if there is a second query annotated in InterfaceApi class, then it prepends '&'. Example: &q=chicken%20breast.
+	- By using ScheduledExecutorService I can define a networking delay for Retrofit so if network requests lasts longer than 3 seconds, I can cancel it. First I submit a runnable to networkIO then I schedule it via AppExecutors class
 38. FrameLayout's layout_gravity="bottom|end" - neat code for positioning for example FAB
 39. RecyclerView
-	- When binding ClickListeners in Adapter, bind them in onBindViewHolder, so getAdapterPosition returns a correct position
+	- When binding ClickListeners in Adapter, bind them in onBindViewHolder, so getAdapterPosition returns a correct position. Probably not being right here.
+	- CodingWIthMitch structured his recycler view very nicely. Check his tuts out. Creating ViewHolder separately increased modularization of RecyclerView + creating onRecyclerViewListener interface helps to decouple onClickListeners from recyclerview adapter to activities/fragments
+	- RecyclerViewAdapter can extend RecyclerView.Adapter<RecyclerView.ViewHolder> it is a generic ViewHolder and I can create many ViewHolder classes extending this and it can easily be used in one adapter. Multiple viewholders in one adapter!
+	- If I have a custom progress bar and collapsing toolbar, add this line in recyclerview inside of a coordinatorlayout 
+		app:layout_behavior="@string/appbar_scrolling_view_behavior" .There is an error prompted by android, but it is just lying... 
+	- VerticalItemDecorator
+		- Create a class RVItemDecorator extending RecyclerView.ItemDecoration. create constructor with spacing int, override getItemOffsets and set outRect.top = spacing; then initialize RVItemDecorator above setLayoutManager and set it to the recyclerview
+	- There are OnScrollListeners which helps you determine if you reached the start or the end of the recyclerview. In onScrollStateChanged use this to determine if the user scrolled to the end of the recyclerview - if(!recyclerView.canScrollVertically(1))
 40. ConstraintLayout
 	- AutoConnect sets up connections for costraining a view\
 	- Aspect ratio is useful to retain 16:9 aspect for different device screens
@@ -222,7 +236,22 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- API 21 AlarmManager has a method calle getNextAlarmClock() that returns next alarm set up on the device 
 	-  To set up repeated AlarmManager I need AlarmReceiver where I can deliver notification and to deliver notification I use alarmManager.setInexactRepeating method. I need two time intervals repeatInterval and triggerTime. To apply this to Wake Up Together I could manipulate repeatInterval to the future time of when to wake up and add it to triggerTime and based on that always resetup alarmManager when alarm is updated
 49. BuildConfig.APPLICATION_ID returns package name and so I could add Intent to this for example. BuildConfig.APPLICATION_ID + ".ACTION_CUSTOM_BROADCAST"
-
+50. Glide
+	- SOmetimes I need to add this to manifest in order to load images. android:usesCleartextTraffic="true"
+51. CoordinatorLayout
+	- it is required when I want to introduce any type of custom toolbar to the app. This allows to have a collapsable toolbar :O
+52. Toolbar
+	- Include CollapsingToolbarLayout from Google material design. in XML create AppBarLayout and inside create Toolbar. create scrollFlags attribute with scroll|enterAlways. Voila
+53. SearchView
+	- setOnQueryTextListener has two methods onTextSubmit and onTextChange so I can lets say update a query whenever user writes something to a searchview
+54. ProgressBar
+	- HorizontalDottedProgressBar source code: https://stackoverflow.com/questions/37741872/how-to-make-custom-dotted-progress-bar-in-android
+55. MediatorLiveData
+	- Good way to edit data before retrieving it back to the observers
+	- Used in repository so you can get access from multiple data sources easily and edit the data before sending it to observers
+56. Saved State usage:
+	- UI bits: selections, scroll state (when app is killed and user comes back, he would be referenced to the same scrolling state he left in recycler view for example)
+	- Navigation state keys (if user is authenticated to the app and kills it, when coming back, he could return to the same activity/fragment )
 /*
  * <-----------------------------ANDROID STUDIO IDE----------------------------->
  */
@@ -262,6 +291,9 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	   }
 	   resConfigs("en", "xxhdpi") // specify a default language & resolution for faster packing of build
 	}
+
+- Articles
+	- https://medium.com/@championswimmer/bringing-android-app-build-times-down-by-95-at-zomato-a505d938e9b8
 /*
  * <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
  */
@@ -317,6 +349,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- Copy and paste
 	- Drag and Drop
 	- Create backward-compatible UIs
+- CoordinatorLayout
 - TransitionManager
 - Animations
 	- https://medium.com/@andkulikov/animate-all-the-things-transitions-in-android-914af5477d50
@@ -364,6 +397,8 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- Handler
 	- runOnuiThread
 	- AppExecutor https://github.com/googlesamples/android-architecture-components/blob/master/PersistenceMigrationsSample/app/src/main/java/com/example/android/persistence/migrations/AppExecutors.java
+	- Future<V>
+	- Task<V>
 	- Coroutines
 
 <---------------------FIREBASE--------------->
@@ -412,6 +447,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- https://proandroiddev.com/android-architecture-d7405db1361c
 	- Simple MVVM Example with RxJava, offline-first design pattern and repository https://old.reddit.com/r/androiddev/comments/8x1fu1/where_to_learn_mvvm_from_scratch/e21gs76/
 	- Android Architecture Diagrams https://www.techyourchance.com/architecture-diagrams-android-applications/
+	- Flux Architecture
 
 LIVE DATA
 	- https://medium.com/@Strk7/the-gentle-guide-to-livedata-2833eee97bd5
@@ -460,20 +496,30 @@ SOFTWARE ENGINEERING THEORY
 - Microservices
 - Serverless architecture
 - Microservices Serverless architecture
+- Kubernetes
+- Software teamwork methodology "feature squads" 
+- Quareterly "Objective Key Results" aka "OKR"
 - TDD
 	- https://medium.com/javascript-scene/tdd-changed-my-life-5af0ce099f80
+- https://en.wikipedia.org/wiki/Type_inference
+- Technical Writing Style https://en.wikiversity.org/wiki/Technical_writing_style
 
 <------------------JAVA STUFF TO LEARN----------------->
 
 - Java Lambda Expression
+	- https://codingwithmitch.com/blog/java-lambdas-for-android-development/
 - Java annotations
 - Map, HashMap, Tree
-- Java Volatile keyword
+- Java Volatile & Synchronized keywords
 - Callback class
 - Java Object Relationships Inheritance https://youtu.be/p5aLAcMIK7M?list=LLpkh0DQ4SbSREpdiYK2Cx7Q
 
 <-------------------ANDROID SDK STUFF----------------->
 
+- Services
+	- https://hellsoft.se/how-to-service-on-android-part-1-63c43d7301b3
+	- PART 2
+	- PART 3
 - Background Services
 - IntentServices https://developer.android.com/reference/android/app/IntentService.html
 - Content Providers
@@ -537,6 +583,8 @@ SOFTWARE ENGINEERING THEORY
 - Lint
 	+ https://infinum.co/the-capsized-eight/what-is-android-lint-and-how-helps-write-maintainable-code?__s=npakz7kzrv2bdnbsaeyp
 	+ https://medium.com/@intelia/getting-the-most-out-of-android-lint-6df05a7ab054
+- Start logging more in the app. Use Firebase Crashlytics and Timber in Android Studio`
+- Build Variants and Product Flavors (modularize build types so it is easier to debug in a bigger project)
 - Modules
 	- https://proandroiddev.com/modular-way-of-building-android-apps-500ac816825
 - Amazon Web Services (AWS)
@@ -558,6 +606,7 @@ SOFTWARE ENGINEERING THEORY
 	- https://medium.com/flutter-community/flutter-mlkit-8039ec66b6a
 - Firebase ML Kit
 - Parse cloud back end
+- Go is good for backends, do research about it
 
 LIBRARIRES
 - Bubble Navigation 								https://github.com/gauravk95/bubble-navigation
@@ -571,6 +620,7 @@ LIBRARIRES
 - Material Search View 								https://github.com/MiguelCatalan/MaterialSearchView
 - Country Code Picker								https://github.com/hbb20/CountryCodePickerProject
 - Pager 											https://github.com/Pradyuman7/Pager?__s=npakz7kzrv2bdnbsaeyp
+- CircleImageView									https://github.com/hdodenhof/CircleImageView
 
 	CODE INJECTION
 	Butterknife										http://jakewharton.github.io/butterknife/
@@ -602,6 +652,7 @@ BIG TUTORIAL WEBSITES
 - https://android.jlelse.eu/android-developer-roadmap-for-2019-14eacb0d0a2 WHAT TO LEARN IN 2019
 
 KOTLIN
+- https://play.kotlinlang.org/byExample/01_introduction/01_Hello%20world
 - https://classroom.udacity.com/courses/ud9011
 - https://github.com/Zhuinden/guide-to-kotlin/wiki
 - https://medium.com/@renaudcerrato/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7
@@ -640,6 +691,8 @@ SOFTWARE RELATED ARTICLES TO READ
 - https://medium.com/swlh/critical-soft-skills-for-software-developers-6845545f6dbd
 - https://medium.freecodecamp.org/leading-innovation-in-engineering-teams-ca9890bcad7c
 - https://medium.freecodecamp.org/learn-the-fundamentals-of-a-good-developer-mindset-in-15-minutes-81321ab8a682
+- https://medium.freecodecamp.org/how-to-write-a-good-software-design-document-66fcf019569c
+- https://medium.com/@kennethreilly/coding-with-intention-d1d61f5add20
 
 - Some advanced stuff https://medium.com/@vardaansh1/an-introduction-to-android-interprocess-communication-and-common-pitfalls-ac4dfeddf89b
 
@@ -652,27 +705,25 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 + https://medium.com/s/story/the-male-leadership-traits-that-encourage-bad-leaders-acc4b2886aee
 + https://medium.com/s/the-nuance/is-sharing-your-feelings-always-healthy-a6be3579c4ae
 + https://medium.com/s/office-politics/the-everything-guide-to-being-the-new-employee-524da4d27682
-- https://betterhumans.coach.me/habit-building-self-awareness-exercises-to-keep-yourself-accountable-9a814c0c761d
-- https://betterhumans.coach.me/how-to-manage-your-fear-of-public-speaking-92964d531147
-- https://medium.com/s/office-politics/4-strategies-for-managing-someone-older-than-you-c6112815c36b
-- https://onezero.medium.com/browser-tabs-are-ruining-your-brain-ccf4151b845b
-- https://medium.com/s/futurehuman/were-in-a-crisis-of-the-heart-70852fa48b49
-- https://betterhumans.coach.me/cognitive-journaling-a-systematic-method-to-overcome-negative-beliefs-119be459842c
-- https://medium.com/s/teamhuman/investing-in-community-with-charles-hugh-smith-448ec19fde22
-- https://medium.com/s/story/i-cured-my-social-media-addiction-by-reading-books-9376c3025079
-- https://medium.com/s/buy-yourself/the-end-of-authenticity-bd858bc3b413
-- https://medium.com/s/story/your-productivity-hinges-on-how-you-arrange-your-desk-6b278f018daf
-- https://medium.com/conquering-corporate-america/36-signs-you-pulled-this-presentation-together-at-the-last-minute-445ea8912899
-- https://medium.com/@anthonydraper/how-to-prioritize-your-tasks-61b56ea3019f
-- https://medium.com/@nallsopp_/how-to-rebalance-your-time-for-the-important-things-in-life-55b25346e0f7
-- https://medium.com/datadriveninvestor/should-you-build-a-minimum-viable-product-367a2f4ff972
-- https://medium.com/xplor8/design-thinking-lean-startup-and-agile-what-is-the-difference-1eed3594b121
-- https://betterhumans.coach.me/how-to-make-the-power-of-your-subconscious-mind-work-for-you-295701128db4
-- https://medium.com/@mialoira/how-to-scale-yourself-as-a-creative-leader-93ce8a22a55c?ref=uxdesignweekly
-- https://creativestrategies.com/consumer-study-app-discovery-downloading-and-purchasing/?utm_campaign=iOS%2BDev%2BWeekly&utm_medium=email&utm_source=iOS%2BDev%2BWeekly%2BIssue%2B386&utm_source=It%27s+an+app%27s+world&utm_campaign=925c89be8a-It%27s+an+app%27s+world+-+April&utm_medium=email&utm_term=0_57042b68ef-925c89be8a-114714559
-- https://medium.com/the-atlantic/the-coming-software-apocalypse-4ffb43f3b288
-- https://medium.com/s/story/strategies-to-pull-yourself-out-of-a-bad-mood-db31d5709fff
-- https://medium.com/s/please-advise/the-essential-guide-to-difficult-conversations-41f736e63ccf
++ https://betterhumans.coach.me/habit-building-self-awareness-exercises-to-keep-yourself-accountable-9a814c0c761d
++ https://betterhumans.coach.me/how-to-manage-your-fear-of-public-speaking-92964d531147
++ https://medium.com/s/office-politics/4-strategies-for-managing-someone-older-than-you-c6112815c36b
++ https://onezero.medium.com/browser-tabs-are-ruining-your-brain-ccf4151b845b
++ https://medium.com/s/futurehuman/were-in-a-crisis-of-the-heart-70852fa48b49
++ https://medium.com/s/buy-yourself/the-end-of-authenticity-bd858bc3b413
++ https://medium.com/s/story/i-cured-my-social-media-addiction-by-reading-books-9376c3025079
++ https://medium.com/s/story/your-productivity-hinges-on-how-you-arrange-your-desk-6b278f018daf
++ https://medium.com/conquering-corporate-america/36-signs-you-pulled-this-presentation-together-at-the-last-minute-445ea8912899
++ https://medium.com/@anthonydraper/how-to-prioritize-your-tasks-61b56ea3019f
++ https://medium.com/@nallsopp_/how-to-rebalance-your-time-for-the-important-things-in-life-55b25346e0f7
++ https://medium.com/datadriveninvestor/should-you-build-a-minimum-viable-product-367a2f4ff972
++ https://medium.com/xplor8/design-thinking-lean-startup-and-agile-what-is-the-difference-1eed3594b121
++ https://betterhumans.coach.me/how-to-make-the-power-of-your-subconscious-mind-work-for-you-295701128db4
++ https://medium.com/@mialoira/how-to-scale-yourself-as-a-creative-leader-93ce8a22a55c?ref=uxdesignweekly
++ https://creativestrategies.com/consumer-study-app-discovery-downloading-and-purchasing/?utm_campaign=iOS%2BDev%2BWeekly&utm_medium=email&utm_source=iOS%2BDev%2BWeekly%2BIssue%2B386&utm_source=It%27s+an+app%27s+world&utm_campaign=925c89be8a-It%27s+an+app%27s+world+-+April&utm_medium=email&utm_term=0_57042b68ef-925c89be8a-114714559
++ https://medium.com/the-atlantic/the-coming-software-apocalypse-4ffb43f3b288
++ https://medium.com/s/story/strategies-to-pull-yourself-out-of-a-bad-mood-db31d5709fff
++ https://medium.com/s/please-advise/the-essential-guide-to-difficult-conversations-41f736e63ccf
 - https://betterhumans.coach.me/coffee-time-out-34eafb198c73
 - https://productcoalition.com/the-art-of-the-strategic-product-roadmap-c881f261b4eb
 - https://medium.com/s/story/dear-founder-maynard-webb-advice-excerpt-letter-to-a-would-be-entrepreneur-baeb0235ab88
@@ -683,6 +734,7 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 - https://elemental.medium.com/strategies-for-self-care-that-really-work-1b3d6ca514a
 - https://medium.com/swlh/the-power-of-saying-less-5bbf5ecf5e73
 - https://medium.com/s/story/in-defense-of-intoxication-f38c7a52af68
+- https://betterhumans.coach.me/cognitive-journaling-a-systematic-method-to-overcome-negative-beliefs-119be459842c
 - https://elemental.medium.com/the-easier-way-to-do-intermittent-fasting-9a9c60ba2e96
 - https://medium.com/s/story/meet-nosurf-the-self-help-group-that-told-us-to-log-off-before-it-was-cool-4ff14516f8fb
 - https://elemental.medium.com/can-unproven-health-rituals-help-you-get-well-e20b8c488847
@@ -690,6 +742,60 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 - https://medium.com/innovation-machine/is-it-a-prototype-or-an-mvp-well-its-a-proof-of-concept-f8df5bb8940a
 - https://medium.com/s/story/a-broke-millennial-guide-to-investing-if-you-have-student-loans-e4428f9e917f
 - https://medium.com/@jproco/what-i-learned-each-time-my-startups-got-acquired-b6be1fa407bc
+- https://medium.com/swlh/the-10-000-hour-myth-why-deliberate-practice-isnt-enough-to-succeed-cbd309cf6800
+- https://onezero.medium.com/its-time-for-tech-companies-to-adopt-a-do-no-harm-approach-ebd6206cb47d
+- https://medium.com/@jproco/three-stories-every-entrepreneur-should-know-3476909629bb
+- https://medium.com/s/thenewnew/the-millennial-obsession-with-starting-over-60308e07861e
+- https://medium.com/s/story/how-to-be-polite-9bf1e69e888c
+- https://onezero.medium.com/welcome-to-the-reliance-economy-3daab396ce4c
+- https://humanparts.medium.com/how-to-listen-to-your-anger-3ce09facbe65
+- https://medium.com/s/story/the-secret-life-of-a-highly-sensitive-person-e5e49ab4918b
+- https://betterhumans.coach.me/how-to-save-your-team-from-meeting-misery-b3d335f65139
+- https://medium.com/@ngoeke/how-to-change-your-life-in-just-10-minutes-per-day-9f02e716977f
+- https://medium.com/s/story/the-best-questions-to-ask-at-your-performance-review-5aba3fb86528
+- https://medium.com/@sjmoore3/founding-a-startup-will-change-you-as-a-person-bf5c17c7186e
+- https://elemental.medium.com/the-dark-side-of-fitness-tracking-9b218989bc47
+- https://elemental.medium.com/marie-kondos-daily-routine-is-delightful-5f3161c466f1
+- https://medium.com/scientific-american/proper-breathing-brings-better-health-690a57b22d35
+- https://onezero.medium.com/the-global-attention-span-is-getting-shorter-ee652a7e09b8
+- https://humanparts.medium.com/when-you-realize-what-you-are-60e1711c755c
+- https://elemental.medium.com/the-problem-with-supplements-e0f5f2fb1d74
+- https://elemental.medium.com/understanding-the-highly-sensitive-person-1e627b920160
+- https://medium.com/better-humans/a-complete-guide-to-the-science-of-self-talk-9da0c478fe62
+- https://medium.com/@danny_forest/i-reinvent-myself-every-6-months-and-so-should-you-620254cf7c0d
+- https://medium.com/s/the-complete-guide-to-beating-procrastination/how-to-use-psychology-to-solve-the-procrastination-puzzle-6e6a56cdd535
+- https://medium.com/swlh/the-power-of-doing-nothing-at-all-73eeea488b8b
+- https://medium.com/s/joint-accounts/finding-the-line-between-frugal-and-cheap-2924ee0add68
+- https://medium.com/s/story/the-best-leaders-know-who-theyre-really-serving-58fb8ee51475
+- https://medium.com/s/story/how-leaders-can-humanize-work-again-63b5deacf7a6
+- https://medium.com/s/story/the-extraordinary-power-of-prolonged-eye-gazing-aee7d99252af
+- https://medium.com/s/story/why-breakups-hurt-like-hell-5edcd3777a46
+- https://elemental.medium.com/is-breakfast-really-the-most-important-meal-of-the-day-42a04cde84ea
+- https://humanparts.medium.com/will-you-choose-alive-time-or-dead-time-8d7b8ba212
+- https://elemental.medium.com/exercise-doesnt-have-to-be-so-hard-it-s-never-too-late-to-start-dfa0ae108ff5
+- https://medium.com/better-humans/want-to-be-happier-how-to-take-charge-of-your-thoughts-e74ad496aced
+- https://medium.com/s/joint-accounts/when-you-know-nothing-about-your-partners-finances-917d0ce63194
+- https://medium.com/s/the-writing-bug/the-sting-of-mistakes-4737e797e085
+- https://onezero.medium.com/we-dont-need-social-media-53d5455f4f6b
+- https://medium.com/swlh/the-new-rules-of-effective-leadership-d2f9d28a49fb
+- https://medium.com/swlh/how-to-turn-negative-emotions-into-positive-results-40ce8be4b5d4
+- https://medium.com/spiralbound/life-after-quitting-9a3d4e986036
+- https://medium.com/better-humans/the-best-last-motivation-article-youll-ever-read-4-tactical-tips-to-turn-self-motivation-into-2337259472ed
+- https://medium.com/s/meghan-daum/advice-for-millennials-the-case-for-spacing-out-addd1f60a5a9
+- https://medium.com/better-humans/the-50-30-10-10-rule-for-how-to-wake-up-earlier-and-work-on-your-dream-66d63b34554d 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Android Interview Questions and Topics to know
 	- https://www.reddit.com/r/androiddev/comments/36hkf0/android_internships_and_junior_dev_positions/

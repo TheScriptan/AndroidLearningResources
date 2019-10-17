@@ -1,0 +1,204 @@
+/*
+* <-----------------------------NOTES ABOUT KOTLIN LANGUAGE----------------------------->
+*/
+1. Unit object corresponds the same as void in Java
+2. Function declaration - fun myFunc(msg: String) : Unit {println(msg)}; fun calling in two ways - myFunc("hello") OR myFunc(msg = "Hello")
+3. Function optional args - fun myFunc(msg: String, prefix: String = "Message:")
+4. Single-expression function - fun multiply(a: Int, b: Int): Int = a * b;
+5. Infix function - extends a class and allows you to use it by omitting '.' operator. 
+    5.1 - infix fun Int.times(str: String) = str.repeat(this); println(5 times "Bye ") //prints 5 times bye
+    5.2 - val pair = "Ferrari" to "Porsche"; println(pair) //prints (Ferrari, Porsche); 
+6. Operator functions - Improves infix functions and allows to use operators for infix fun   
+    6.1 - operator fun Int.times(str: String) = str.repeat(this); println(2 * "Bye ") //prints bye twice
+7. Functions with vararg - fun printAll(vararg msg: String) {for(m in msg) print("$m ")} //prints all strings
+    7.1 You can add additional parameter to vararg function. Java does not allow that
+    7.2 To pass vararg as a String use * operator to pass in *msg instead of passing Array<String> 
+8. Mutable and immutable variables - val and var uses type inference to declare type of variable.
+    8.1 val - immutable variable. Usage of val is recommended (Similar to final in Java)
+    8.2 var - mutable variable. Use when you want to change variable
+    8.3 var neverNull: String = "Can't be null"; var neverNull: String? = "Can be null"
+9. Declaring classes - no need for 'new' keyword. Kotlin creates constructor automatically. WHen creating data class, Kotlin generates toString and equals methods
+    9.1 class Person(var name: String, val bday: Date); creates mutable name and immutable bday
+    9.2 DATA class Person(var name: String, val bday: Date); creates data class with toString and equals, hashCode and copy methods generated already
+    9.3 Kotlin classes are final by default
+    9.4 To declare class for inheritance use open modifier: open class Dog{}. Same for method overriding, you need to use open
+    9.5 ENUM classes model types that represent finite state for some task e.g. human state, car state, et cetera; enum class State {IDLE, RUNNING, FINISHED}
+    9.6 Sealed Classes allows to restrict inheritance. Once classes are declared as sealed classes, nobody can create its subclasses
+    9.7 To extend data class, use 'constructor' keyword
+10. Generics - increases code reusability. class MutableStack<E> (vararg items: E)
+    10.1 Generic functions - fun <E> mutableStackOf(vararg elements: E) = MutableStack(*elements)
+11. Inheritance - Create a class that can be used to extend into more unique class with similar behavior of the parent class
+    11.1 Overriding methods or attributes requires the 'override' modifier
+    11.2 Passing Constructor arguments in super class + default parametarized argument - class SiberianTiger(origin: String = "Siberian"): Tiger(origin = origin)
+        11.2.1 In this case SiberianTiger argument is nor val or var because it just passes value to the superclass
+12. When (switch successor) - can be used as a statement or as an expression
+    12.1 When Statement:
+    fun cases(obj: Any){
+    when(obj){
+        1 -> println("One")
+        "Hello" -> println("Greetings")
+        is Long -> println("Long")
+        !is String -> println("Not a string")
+        else -> println("DEFAULT SWITCH $obj" )
+    }
+}
+    12.2 When Expression: (default branch is required to avoid crashes?)
+    fun whenAssign(obj: Any): Any{
+    return when(obj){
+        1 -> "one"
+        "Hello" -> 1
+        is Long -> false
+        else -> 42
+    }
+}
+13. Ranges - Kotlin as set of tools to define ranges. Useful in for loops to define how long you want to loop
+    13.1 for(i in 0..3) print("$i ") // prints 0 1 2 3
+    13.2 for(i in 2..8 step 2) print("$i ") //prints 2 4 6 8 bcuz step 2 adds +2 to i just like i+= 2
+    13.3 for(i in 3 downTo 0) print("$i ") //prints 3 2 1 0 bcuz downTo == i--;
+    13.4 range can iterate over chars too for(c in 'a'..'d') print("$c ") // a b c
+    13.5 for(c in 'z' downTo 's' step 2) print("$c ") // z x v t 
+    13.6 Ranges can also be used in if statement! 
+        val x = 2; 
+        if(x in 1..10) print("X is in range 1..10")
+        else if(x !in 1..4) print("X is not in range 1..4")
+14. Equality Checks - == for structural comparison e.g when comparing two list they must have same items to return true; === for referential comparison e.g. compared obj has to come from the same reference
+15. Kotlin has no ternary operator, however you can write like this: fun max(a: Int, b: Int) = if(a > b) a else b
+16. Object keyword - this keyword ensures that only one instance of specific class is created even if there are two threads running aka anonymous class in Java. + Object keyword helps to create a singleton pattern. Other case is to use it as a declaration where you can write your own custom methods. But if you want to use static methods in Kotlin, use companion object.
+17. Higher-Order function is a function that can take another function as a parameter
+    17.1 fun calculate(x: Int, y: Int, operation: (Int, Int) -> Int): Int {return operation(x, y)}
+         fun sum(x: Int, y: Int) = x + y
+         val sumResult = calculate(5, 5, ::sum)
+         val multResult = calculate(x = 5, y = 5, operation = {a, b -> a * b})
+         OR
+         val multResult = calculate(5, 5) {a, b -> a * b} Kotlin suggests to have lambda outside of parenthesis
+    17.2 fun operation(): (Int) -> Int{
+        return ::square
+         }
+         fun square(x: Int) = x * x
+         val func = operation()
+         println(func(2))
+18. Lambdas are very flexible in Kotlin the only thing you need to satisfy is give compiler a way to know what type are you using
+    18.1 val upperCase3 = { str: String -> str.toUpperCase() }  //Here compiler knows its a string
+    18.2 val uppercase4 = {str -> str.toUpperCase()} //Here compiler can not figure out String will be used in the method so it prompts an error
+19. Extension functions and properties
+    19.1 Extension functions - extends classes functions
+    19.2 Extension properties - extends classes properties
+COLLECTIONS
+20. List can be mutable and immutable. List<T> Immut; MutableList<T> Mutable;
+    20.1 List iteration: mList.forEach{println("Data: $i")
+    20.2 It is possible to check if something exists in collection by 'in' keyword
+         OLD: if(fruits.contains("apples")) println("You have apples")
+         NEW: if ("apple" in fruits) println("You have apples")
+21. Set is an unordered collection that does not support duplicates. To create set use setOf() (returns Set<T>) and mutableSetOf() (returns MutableSet<T>))
+22. Map is a collection of key/value pairs. Where each key is unique and that key represents value. To create map use: mapOf() or mutableMapOf()
+    22.1 Map iteration myMap.forEach( (t, u) -> println("$t : $u"))
+23. 
+    23.1 'filter' function enables to filter collections 
+         val numbers = listOf(1, -2, 3, -4, 5, -6)
+         val pos = numbers.filter {it > 0} //returns positive numbers
+         val neg = numbers.filter {it < 0} //returns negative numbers
+    23.2 'map' functions allows you to transform all elements in the collection
+         val doubled = numbers.map {it * 2} //returns all numbers doubled
+    23.3 'any' function returns true if collection contains at least one predicate
+         val anyNegative = numbers.any {it < 0}
+         'all' returns true if all elements match predicate
+         val allNegative = numbers.all {it < 0}
+         'none' returns true if there is no element that matches predicate
+         val allLess6 = numbers.none {it > 6}
+    23.4 'find' finds first element in collection that matches predicate and returns it
+    23.5 'findLast' finds last element in collection that matches predicate and returns it
+    23.6 'first' returns first element, 'last' returns last element in collection
+    23.7 'count' returns collection size or you can define how that size is calculated
+         val numbers = listOf(1, -2, 3, -4, 5, -6)
+         val evenCount = numbers.count {it % 2 == 0}
+    23.8 'associateBy' and 'groupBy' builds a map from the elements of collection to a specified key. Optionally you can specify what value can be put to that key
+    Difference between associateBy and groupBy is that associateBy uses last suitable element, and groupBy builds a list of suitable elements
+         1)val cityBook = people.associateBy(Person::phone, Person::city) //returns Map<String, String> where key is phone and value is city
+         2) val peopleCities = people.groupBy(Person::city, Person::name) //returns Map<String, List<String>> key is city, value is names of people who live in the city
+    23.9 'min' 'max' and 'minBy' 'maxBy' allows to find minimum or maximum element in a collection. If collection is not a number, you have to declare your way how to determine min or max by using minBy/maxBy function
+         val list = listOf(p1, p2, p3) //p1-p3 has name and age properties
+         val min = list.minBy{it.age}
+         val max = list.maxBy{it.age}
+    23.10 'sorted' returns collection sorted ascending, you can use 'sortedBy' to define your own sorting
+         val shuffled = listOf(5, 4, 3, 2, 1)
+         val inverted = shuffled.sortedBy{-it} //returns inverted collection
+24. #500 'let' and 'run' allows to attach code block to a variable (not sure of use cases for this) The use case that I have in my head is satisfied by using 'apply' keyword. It initializes object and executes statements in a code block. 
+'let' use case is to execute code block if not null
+25. 'with' keyword allows to access members arguments and properties
+    data class Person(val name: String, val age: Int)
+    var p = Person("Ainis", 21)
+    with(p) {println("$name $age")}
+26. To check what instance is use 'is' keyword if(obj is String) println("You got string")
+27. Elvis operator ?: is if not null and else shorthand
+    println(files?.size ?: "empty")
+28. 'if' and 'try/catch' can be written as expressions
+    if: val result = if(param -- 1) "one" else if(param == 2) "two" else "three"
+29. How to create an annotation class that can be used to warn the programmer that specific class is experimental:
+    @Experimental(level = Experimental.Level.WARNING)
+    annotation class NewAPI
+    @NewAPI
+    class MicroserviceAPI
+30. Observable Delegate Example: Returns a property delegate for a read/write property that calls a specified callback function when changed
+    import kotlin.properties.Delegates.observable
+    var maxCount: Int by observable(initialValue = 3){ property, oldValue, newValue ->
+        println("${property.name} is being changed from $oldValue to $newValue")
+    }
+31. Inline functions are important if you are over-using lambdas. Because when fun is using lambdas, new object is always created and it allocates a heap, while inline function copies the lambda code block to the place where it is being called
+32. var i1: Int = 5 is Int in Kotlin, int in Java; var i2: Int? = 4 is Int? in Kotlin, Integer in Java
+
+
+
+
+/*
+ * <-----------------------------LEARNING PLAN----------------------------->
+ */
+
++ https://play.kotlinlang.org/byExample/01_introduction/01_Hello%20world
+- https://classroom.udacity.com/courses/ud9011
++ https://github.com/Zhuinden/guide-to-kotlin/wiki
++ https://medium.com/@renaudcerrato/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7
+5. https://classroom.udacity.com/courses/ud9012
+OR
+5. https://codelabs.developers.google.com/android-kotlin-fundamentals/
+6. https://codelabs.developers.google.com/codelabs/android-room-with-a-view-kotlin/#0
+7. https://codelabs.developers.google.com/codelabs/android-paging/#2
+8. https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/composing-suspending-functions.md
+8.1 https://codelabs.developers.google.com/codelabs/kotlin-coroutines/#0
+9. https://classroom.udacity.com/courses/ud888
+10. https://developer.android.com/jetpack/docs/guide
+11. Kotlin SOLID https://blog.joshua-greenwood.com/the-solid-principles-and-kotlin/?utm_source=reddit&utm_medium=reddit&utm_campaign=the-solid-principles-and-kotlin
+12. Deepen Language Knowledge
+12.-1 Lazy Property
+12.0 Null-Safety https://kotlinlang.org/docs/reference/null-safety.html
+12.1 Iterators
+12.2 Sealed Classes
+12.3 Objects + Companions https://antonioleiva.com/objects-kotlin/
+12.4 Lambdas https://kotlinlang.org/docs/reference/lambdas.html
+12.5 Delegates and Delegated Properties
+12.10 Kotlin Coding Conventions and Tips
+
+OPTIONAL
+- https://www.raywenderlich.com/android/learn
+
+/*
+* <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
+*/
+
+<-----------FIREBASE-------------->
+- In kotlin but the theory for extending livedata is the same https://medium.com/@lgvalle/firebase-viewmodels-livedata-cb64c5ee4f95
+
+<-----------RxJava-------------->
+- RxJava + Kotlin https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
+
+<-----------ARCHITECTURE-------------->
+- 5 Part Architecture tutorial to build an app, sadly in Kotlin https://www.baruckis.com/android/kriptofolio-app-series/
+- MVVM FOR KOTLIN VERY GOOD https://resocoder.com/2018/09/07/mvvm-on-android-crash-course-kotlin-android-architecture-components/ 
+
+
+<-----------ARTICLES-------------->
+- Retrofit, Coroutines and Kotlin https://android.jlelse.eu/android-networking-in-2019-retrofit-with-kotlins-coroutines-aefe82c4d777
+- Kotlin Backend + GCloud With Android https://www.raywenderlich.com/4656683-build-an-api-with-kotlin-on-google-cloud-platform
+<-----------USEFUL-------------->
+- Kotlin Design Patterns https://github.com/dbacinski/Design-Patterns-In-Kotlin
+- From Java to Kotlin Cheat Sheet https://fabiomsr.github.io/from-java-to-kotlin/
+- Kotlin Style-guide and reference for common mistakes https://www.reddit.com/r/androiddev/comments/77sl1c/devs_who_review_kotlin_regularly_what_are_things/dorsk3i/

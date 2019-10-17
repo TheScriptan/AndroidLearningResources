@@ -400,6 +400,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- Future<V>
 	- Task<V>
 	- Coroutines
+		- https://medium.com/androiddevelopers/coroutines-on-android-part-i-getting-the-background-3e0e54d20bb
 
 <---------------------FIREBASE--------------->
 
@@ -420,7 +421,6 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 - IMPORTANT TUTORIALS FOR FIREBASE
 - https://firebase.googleblog.com/2017/12/using-android-architecture-components.html
 - https://android.jlelse.eu/android-architecture-components-with-firebase-907b7699f6a0
-- In kotlin but the theory for extending livedata is the same https://medium.com/@lgvalle/firebase-viewmodels-livedata-cb64c5ee4f95
 - Cloud Firestore LiveData<QuerySnapshot> https://stackoverflow.com/questions/49798814/android-architecture-components-with-firebase-specifically-firestore
 - FCM
 	- https://blog.usejournal.com/send-device-to-device-push-notifications-without-server-side-code-238611c143
@@ -433,7 +433,6 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- https://proandroiddev.com/the-missing-google-sample-of-android-architecture-components-guide-c7d6e7306b8f
 	- MVVM Pattern https://proandroiddev.com/mvvm-architecture-viewmodel-and-livedata-part-1-604f50cda1
 	- Clean Architecture https://medium.com/@dmilicic/a-detailed-guide-on-developing-android-apps-using-the-clean-architecture-pattern-d38d71e94029
-	- 5 Part Architecture tutorial to build an app, sadly in Kotlin https://www.baruckis.com/android/kriptofolio-app-series/
 	- Another good readup about architecture https://medium.com/androiddevelopers/google-i-o-2018-app-architecture-and-testing-f546e37fc7eb
 	- Single Source of Truth https://medium.com/@develop.rahimi95/single-source-of-truth-with-mvvm-retrofit2-livedata-rxjava-and-room-in-repository-pattern-f5304f39175
 	- Long text but maybe worth it https://www.wintellect.com/model-view-viewmodel-mvvm-explained/
@@ -455,9 +454,6 @@ LIVE DATA
 	- https://proandroiddev.com/why-should-you-wrap-livedata-with-your-own-abstraction-e738d94cc745
 	- https://medium.com/@begalesagar/observe-livedata-from-viewmodel-in-fragment-fd7d14f9f5fb
 
-ROOM
-	- https://medium.com/@FizzyInTheHall/converting-types-with-room-and-kotlin-9ee45da5e3ac
-
 ARCHITECTURE COMPONENTS
 	- Data binding support
 	- WorkManager
@@ -478,8 +474,9 @@ SOFTWARE ENGINEERING THEORY
 - https://en.wikipedia.org/wiki/Dependency_injection 
 - https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern
 - SOLID Principles https://scotch.io/bar-talk/s-o-l-i-d-the-first-five-principles-of-object-oriented-design#toc-single-responsibility-principle
-- DRY code
-- WET code
+- DRY Code
+- WET Code
+- KISS Code
 - https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel
 - https://en.wikipedia.org/wiki/Race_condition
 - https://hackernoon.com/top-10-system-design-interview-questions-for-software-engineers-8561290f0444
@@ -503,7 +500,23 @@ SOFTWARE ENGINEERING THEORY
 	- https://medium.com/javascript-scene/tdd-changed-my-life-5af0ce099f80
 - https://en.wikipedia.org/wiki/Type_inference
 - Technical Writing Style https://en.wikiversity.org/wiki/Technical_writing_style
-
+- https://en.wikipedia.org/wiki/Resource-oriented_architecture
+- https://en.wikipedia.org/wiki/Information_theory
+- https://en.wikipedia.org/wiki/Systems_engineering
+- https://en.wikipedia.org/wiki/Abstraction_(computer_science)
+- https://en.wikipedia.org/wiki/Boolean_algebra
+- https://en.wikipedia.org/wiki/Number_theory
+- https://en.wikipedia.org/wiki/Set_theory
+- https://en.wikipedia.org/wiki/Machine_learning
+- https://en.wikipedia.org/wiki/Enterprise_architecture
+- https://scottberkun.com/essays/46-why-software-sucks/ READ REFERENCES, many good articles to get into to!
+- https://en.wikipedia.org/wiki/Software_craftsmanship
+- https://en.wikipedia.org/wiki/Positive_psychology
+- https://en.wikipedia.org/wiki/Flow_(psychology)
+- https://en.wikipedia.org/wiki/First-class_function
+- https://en.wikipedia.org/wiki/Fold_(higher-order_function)
+- https://plato.stanford.edu/entries/computer-science/#ProgMathObje
+- https://plato.stanford.edu/entries/technology/
 <------------------JAVA STUFF TO LEARN----------------->
 
 - Java Lambda Expression
@@ -576,19 +589,21 @@ SOFTWARE ENGINEERING THEORY
 
 <----------------GOOGLE PLAY RELEASE AN APP--------------------->
 
-- https://blog.aritraroy.in/releasing-android-apps-like-a-pro-52003779a13
-- https://medium.freecodecamp.org/the-mobile-app-launch-checklist-how-to-ship-apps-like-a-boss-84a20f5d8a45
++ https://blog.aritraroy.in/releasing-android-apps-like-a-pro-52003779a13
++ https://medium.freecodecamp.org/the-mobile-app-launch-checklist-how-to-ship-apps-like-a-boss-84a20f5d8a45
 
 <----------------OTHER------------------------------>
-- Lint
++ Lint
 	+ https://infinum.co/the-capsized-eight/what-is-android-lint-and-how-helps-write-maintainable-code?__s=npakz7kzrv2bdnbsaeyp
 	+ https://medium.com/@intelia/getting-the-most-out-of-android-lint-6df05a7ab054
-- Start logging more in the app. Use Firebase Crashlytics and Timber in Android Studio`
++- Start logging more in the app. Use Firebase Crashlytics and Timber in Android Studio`
 - Build Variants and Product Flavors (modularize build types so it is easier to debug in a bigger project)
 - Modules
 	- https://proandroiddev.com/modular-way-of-building-android-apps-500ac816825
 - Amazon Web Services (AWS)
 - Google Cloud
+- CI/CD
+	- https://medium.com/rocknnull/setup-android-continuous-integration-ci-for-bitbucket-in-1-minute-9b72a4f1d745
 - Heroku
 - Gradle
 - ProGuard
@@ -601,12 +616,11 @@ SOFTWARE ENGINEERING THEORY
 	- https://medium.com/@balakrishnan.750/android-application-class-a8a1d64c82d1
 	- https://github.com/codepath/android_guides/wiki/Understanding-the-Android-Application-Class
 	- https://stackoverflow.com/questions/45903111/android-extending-application-class-why-do-we-need-to-implement-singleton-patt
-- TensorFlo
+- TensorFlow
 - Machine Learning
 	- https://medium.com/flutter-community/flutter-mlkit-8039ec66b6a
 - Firebase ML Kit
 - Parse cloud back end
-- Go is good for backends, do research about it
 
 LIBRARIRES
 - Bubble Navigation 								https://github.com/gauravk95/bubble-navigation
@@ -621,6 +635,7 @@ LIBRARIRES
 - Country Code Picker								https://github.com/hbb20/CountryCodePickerProject
 - Pager 											https://github.com/Pradyuman7/Pager?__s=npakz7kzrv2bdnbsaeyp
 - CircleImageView									https://github.com/hdodenhof/CircleImageView
+- Groupie 											https://github.com/lisawray/groupie/
 
 	CODE INJECTION
 	Butterknife										http://jakewharton.github.io/butterknife/
@@ -651,17 +666,7 @@ BIG TUTORIAL WEBSITES
 - https://guides.codepath.com/android
 - https://android.jlelse.eu/android-developer-roadmap-for-2019-14eacb0d0a2 WHAT TO LEARN IN 2019
 
-KOTLIN
-- https://play.kotlinlang.org/byExample/01_introduction/01_Hello%20world
-- https://classroom.udacity.com/courses/ud9011
-- https://github.com/Zhuinden/guide-to-kotlin/wiki
-- https://medium.com/@renaudcerrato/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7
-- https://medium.com/@marco_cattaneo/walking-with-kotlin-firsts-steps-c7ebcc182c96
-- https://android.jlelse.eu/switching-from-java-to-kotlin-5-exciting-features-for-android-developers-49ce712a546
-- MVVM FOR KOTLIN VERY GOOD https://resocoder.com/2018/09/07/mvvm-on-android-crash-course-kotlin-android-architecture-components/ 
-- https://www.raywenderlich.com/android/learn
-- RxJava + Kotlin https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
-- Retrofit, Coroutines and Kotlin https://android.jlelse.eu/android-networking-in-2019-retrofit-with-kotlins-coroutines-aefe82c4d777
+
 
 WAYS HOW TO APPROACH DEVELOPMENT OR OTHER IDEAS HOW TO DEVELOP A BETTER, EFFICIENT APP
 - Before implementing a new feature into the current app, create a sample app to test the feature to get a better understanding of new feature implementation method
@@ -693,6 +698,21 @@ SOFTWARE RELATED ARTICLES TO READ
 - https://medium.freecodecamp.org/learn-the-fundamentals-of-a-good-developer-mindset-in-15-minutes-81321ab8a682
 - https://medium.freecodecamp.org/how-to-write-a-good-software-design-document-66fcf019569c
 - https://medium.com/@kennethreilly/coding-with-intention-d1d61f5add20
+- https://medium.com/swlh/your-app-will-be-finished-on-tuesday-which-tuesday-42f10f3d9ef4
+- https://medium.com/free-code-camp/the-most-important-skill-a-programmer-can-learn-9d410c786baf
+- https://medium.com/@PurpleGreenLemon/how-not-to-get-a-30k-bill-from-firebase-37a6cb3abaca
+- https://medium.com/swlh/5-powerful-habits-of-successful-developers-1c0e32659ea3
+- https://hackernoon.com/dont-be-that-guy-write-better-functions-f5423aa01c1f
+- https://medium.com/edge-coders/the-mistakes-i-made-as-a-beginner-programmer-ac8b3e54c312
+- https://medium.com/better-programming/restful-api-design-step-by-step-guide-2f2c9f9fcdbf
+- https://medium.com/swlh/the-plight-of-the-junior-software-developer-494ff1fc4392
+- https://medium.com/swlh/how-to-write-good-code-under-pressure-5f795ec7f6ec
+- https://medium.com/better-programming/7-habits-of-highly-effective-programmers-563ee3b63f33
+- https://blog.usejournal.com/consider-yourself-a-developer-you-should-solve-the-project-euler-problems-ed8d13397c9c
+- https://hackernoon.com/top-12-things-that-destroy-developer-productivity-2ddf0abc190
+- https://towardsdatascience.com/10-common-software-architectural-patterns-in-a-nutshell-a0b47a1e9013
+- https://medium.com/better-programming/the-marks-of-a-true-senior-developer-d5f3b11c3375
+- https://medium.com/better-programming/top-signs-of-an-over-experienced-programmer-22bbe0b57663
 
 - Some advanced stuff https://medium.com/@vardaansh1/an-introduction-to-android-interprocess-communication-and-common-pitfalls-ac4dfeddf89b
 
@@ -724,10 +744,12 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 + https://medium.com/the-atlantic/the-coming-software-apocalypse-4ffb43f3b288
 + https://medium.com/s/story/strategies-to-pull-yourself-out-of-a-bad-mood-db31d5709fff
 + https://medium.com/s/please-advise/the-essential-guide-to-difficult-conversations-41f736e63ccf
-- https://betterhumans.coach.me/coffee-time-out-34eafb198c73
-- https://productcoalition.com/the-art-of-the-strategic-product-roadmap-c881f261b4eb
-- https://medium.com/s/story/dear-founder-maynard-webb-advice-excerpt-letter-to-a-would-be-entrepreneur-baeb0235ab88
-- https://medium.com/s/story/to-make-your-business-more-efficient-take-a-lesson-from-bee-colonies-7c5ffd0ba4c5
++ https://elemental.medium.com/the-case-for-walking-431b82f1eaa9
++ https://medium.com/darius-foroux/10-lessons-i-learned-from-making-many-mistakes-in-my-20s-a9c5c49871e9
++ https://betterhumans.coach.me/coffee-time-out-34eafb198c73
++ https://productcoalition.com/the-art-of-the-strategic-product-roadmap-c881f261b4eb
++ https://medium.com/s/story/dear-founder-maynard-webb-advice-excerpt-letter-to-a-would-be-entrepreneur-baeb0235ab88
++ https://medium.com/s/story/to-make-your-business-more-efficient-take-a-lesson-from-bee-colonies-7c5ffd0ba4c5
 - https://elemental.medium.com/how-im-preparing-for-the-dementia-i-believe-i-ll-get-9bf265816792
 - https://elemental.medium.com/why-stravas-ceo-doesn-t-work-evenings-or-weekends-a72093618711
 - https://onezero.medium.com/the-death-of-boredom-3001a24dc709
@@ -783,13 +805,37 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 - https://medium.com/better-humans/the-best-last-motivation-article-youll-ever-read-4-tactical-tips-to-turn-self-motivation-into-2337259472ed
 - https://medium.com/s/meghan-daum/advice-for-millennials-the-case-for-spacing-out-addd1f60a5a9
 - https://medium.com/better-humans/the-50-30-10-10-rule-for-how-to-wake-up-earlier-and-work-on-your-dream-66d63b34554d 
-
-
-
-
-
-
-
+- https://medium.com/complete-coding/how-i-doubled-my-salary-in-5-months-and-got-an-amazing-job-1110d1779e0b
+- https://medium.com/swlh/build-a-side-project-build-an-empire-d3ffa211589c
+- https://medium.com/swlh/these-are-the-five-lessons-that-changed-my-life-this-year-491112bc8c37
+- https://elemental.medium.com/the-self-care-paradox-1480eaf72977
+- https://elemental.medium.com/good-posture-matters-even-more-than-you-think-fac02fd575ad
+- https://medium.com/better-humans/how-to-create-any-habit-with-advice-from-the-four-greatest-habit-masters-9b96528db259
+- https://elemental.medium.com/why-your-brain-needs-idle-time-e5d90b0ef1df
+- https://medium.com/s/story/the-challenge-of-defining-success-as-a-freelancer-9c03effebb8f
+- https://medium.com/darius-foroux/the-purpose-of-life-is-not-happiness-its-usefulness-65064d0cdd59
+- https://medium.com/personal-growth/socrates-living-the-good-life-42b56ad7ae13
+- https://elemental.medium.com/do-productivity-playlists-actually-work-6d362bd23bf7
+- https://medium.com/personal-growth/you-need-these-people-in-your-life-567586307a3c
+- https://medium.com/s/please-advise/my-eyes-are-up-here-5f6eba6a4d1e
+- https://medium.com/@devonprice/laziness-does-not-exist-3af27e312d01
+- https://medium.com/better-humans/how-to-deal-with-the-end-of-a-life-5032b4ba31ae
+- https://medium.com/better-humans/this-is-how-to-raise-your-testosterone-levels-naturally-995daab1a944
+- https://medium.com/swlh/how-to-decide-what-to-do-with-your-life-59198b8d4a86
+- https://medium.com/s/freakonomicsradio/how-to-change-your-mind-5b1b4ba7b177
+- https://medium.com/darius-foroux/the-only-sleep-hack-that-actually-works-78e53020d27d
+- https://medium.com/darius-foroux/this-strategy-makes-procrastination-impossible-783f667c32b3
+- https://medium.com/personal-growth/scandinavian-life-philosophies-for-a-long-happy-and-meaningful-life-b324c2014c4b
+- https://onezero.medium.com/dont-be-a-phonehead-77f47b929c23
+- https://medium.com/darius-foroux/how-to-be-a-leader-that-inspires-people-to-change-f9ea6ea06daf
+- https://medium.com/darius-foroux/4-things-i-gave-up-to-be-free-1a7e5e8e08c3
+- https://medium.com/@jproco/how-to-spin-out-a-bigger-and-better-startup-186ef5b270a
+- https://medium.com/better-humans/this-morning-routine-will-save-you-20-hours-per-week-a05c68b8e73c
+- https://medium.com/personal-growth/surprising-advice-from-a-wealthy-man-483c227f821f
+- https://elemental.medium.com/the-art-and-science-of-remembering-df393a17685b
+- https://elemental.medium.com/how-much-time-outdoors-do-you-really-need-ff3e5afd255d
+- https://medium.com/better-humans/how-to-do-a-life-changing-accountability-partnership-in-less-than-2-minutes-a-day-41142d80c44d
+- https://medium.com/mind-cafe/how-to-radically-improve-your-life-61389cdb0f50
 
 
 

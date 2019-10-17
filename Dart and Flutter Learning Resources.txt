@@ -27,6 +27,8 @@ var list1 = [5, 10, ...?list]; Question mark automatically checks if the list is
 14. It is possible to initialize variables before even the constructor runs Point.constructor(String[] points) : x = points[0], y = points[1];
 15. Getters and setters num get getX => x; set setX(num value) => left = value - width;
 16. When expanding lambda, not semi colon is needed to end statement, but ','. set right(num value) => {left = value - width, left++};
+	- Fat Arrow allows to write only ONE statement ahead of => like void hello(String hi) => print(hi);
+	- int getArea(int a, int b) => a * b; You do not need to write return when using fat lambda with a return type;
 17. enum Color {red, green, blue} enumeration index starts at zero, so red.index == 0; To get a list from enum - List<Color> colors = Color.values;
 18. Mixin classes are reusable classes. Can define which superclass is required - mixin MusicalPerformer on Musician {...}
 19. Static variables are not initialized until they are used! ;o
@@ -41,6 +43,7 @@ var list1 = [5, 10, ...?list]; Question mark automatically checks if the list is
 	- Optional Positional Parameter in Function printCountries(String s1, [String s2, String s3]); s2 and s3 can be ignored with [] brackets 
 	- Named Function Parameters - intFindVolume(int a, {int b, int c}) findVolume(10, c: 20, b: 30); Sequence does not matter with named parameters
 	- Default Parameters - int findVolume(int a, int b, {int c = 20});
+	- Function can be written like this myFunc(int a) {print("$a");} without specifying if it is void or int or double (returns null)
 28. int a = 12 / 4; gives an error that result potentially can return double, to fix it use '~'. int a = 12 ~/ 4;
 29. Exceptions. 
 	- ON Clause - is used when you know what exception to expect try {... statments} on IntegerDivisionByZeroException {... on error occurance}
@@ -56,13 +59,148 @@ var list1 = [5, 10, ...?list]; Question mark automatically checks if the list is
     static final DBProvider db = DBProvider._();
     ...
     } 
+35. Class is created just like Java: class Student{ int id; String name; void study(){}; void sleep(){}}
+	- Default Constructor Student();
+	- Parametarized Constructor Student(int _id, String _name) {id = _id; name = _name}; OR Student(this.id, this.name); Both works the same!
+	- You can not have default constructor and parametarized constructor in the same class!!! 
+36. Getters and setters
+	- Default Getters and Setters: Student{String name;} student.name = "John"; print(student.name) by default these are already getters and setters
+	- Custom Getters and Setters: Student{double _percent; set percentage(double marksSecured) => _percent = (marksSecured / 500) * 100; double get percentage => _percent;}
+	- Private Instance Variable: _percent = 0; //this makes a variable private in a Dart class, underscore secures the encapsulation of an instance variable
+37. Inheritance
+	- Single-Inheritance: ClassB extends ClassA;
+	- Multi-Level Inheritance: ClassC extends ClassB; ClassB extends ClassA;
+	- Hierarchical Inheritance: ClassB extends ClassA; ClassC extends ClassA;
+38. Method overriding. If Parent has method eat() and child has eat(); at first it is overriden in child, if you want to have parent method eat too. write in child eat function super.eat();
+39. Inheritance: if superclass constructor has arguments, child also has to have it: Dog(String breed, String color) : super(color){} and also in named constructors you must define superclass arguments
+40. Named Constructors from Parent if Animal has named Constructor, Dog can use namd constructor with animal named 
+	constructor like this: Dog.namedConst(String color) : super.namedConst(color) {}
+41. Abstract classes define required methods like this: void draw(); and it is mandatory to override them in child classes 
+42. Interface classes can define methods with {} and later can be used with implements statmenent. class Television implements Remote{}; Implements make you implement mandatory methods from the parent interface class. YOu can not call super in overriden methods, because this is an interface and not abstract class. Can implement multiple classes too
+43. Static variables can be defined in classes and can be accessed only via Class reference and not instance reference eg: print(Rectangle.amount); same with static methods Rectangle.printAllRectNames();
+	- Saves memory for constant values like pi, because static variables are instantiated only once. (static const double pi = 3.14;)
+	- Can not access instance methods and variables from a static method
+	- Static variables are LAZILIY initialized. Only when it is used
+44. Lambda expression: a function without a name also known as anonymous function or just lambda
+	#1
+		var multBy4 = (int n) => n * 4;
+		Function addNumbers = (int a, int b) => print("${a + b}");
+	#2
+		multBy4(int n) => n * 4; tear-off automatically declares the name of this function object
+		addNumbers(int a, int b) => print(a+b);
+45. Higher-Order function: Can accept function as a parameter or can return a function or do both
+	Function task(){Function task = (int a) => a*4; return task;} main(){var myTask = task(); print(myTask(10)); //returns 40}
+46. Closures: it is a special function. Within closure you can mutate (modify) the values of a variable present in the parent scope. Closure is able to modify variable present in the parent scope and also remember where variables are used outside of their scope (lexical scope)
+	#1 Example: let's say main has a string message and an anonymous inner function which calls this message. Other languages can not call top-level/parent scope variables, but Dart supports closures and allows to call that. This is a closure that has access to parent scope when scope has closed
+47. List: in Dart is same as Array also
+	- Two types of lists: 
+		- Fixed-length list (like array) List<int> numbers = List<int>(5);
+			- add/access can be done like array numbers[0] = 5;
+	 	- Growable list (length is dynamic like ArrayList) List<int> nums = List();
+		 	- adding can be done only by nums.add(5);
+			- access can be done again like this nums[0] = 55;
+		- Can access forEach from list instance: nList.forEach((n) => print(n));
+48. Set: Unordered collection of unique items. Set can not contain duplicate entries, everything is unique, there is no index too. 
+	- HashSet: Implementation of the unordered set. It is based on Hast-table based Set Implementation
+	- Set<int> mySet = Set.from([5, 55, 555, 14]); OR Set<int> mySet = Set<int>();
+	- mySet.forEach((n) => print(n)); is the best way to traverse the set collection.
+	- mySet.contains(73); returns a boolean if it contains or not. Best way to check if there is an item in the set
+49. Maps & HashMaps: unordered collection of key-value pair. Key-value can be any type of object type. Key is ALWAYS unique and value can be DUPLICATE. Commonly called Hash or Dictionary. Size of map is NOT FIXED and can be increased or decreased accordingly by the amount of key-value pairs exists in the map.
+	- HashMap: implementation of map and is based on hash-table.
+	- To print keys or values use for(var k in fruits.keys) {print(k);} for(var v in fruits.values) {print(v);} 
+	  OR fruits.forEach((key, value) => print("key: $key value: $value" ));
+	- fruit.containsKey("apple") returns boolean;
+	- fruits.update("apple", (value) => "green");
+
 /*
 * <-----------------------------NOTES ABOUT FLUTTER FRAMEWORK----------------------------->
 */
 
+---Shortcuts---
+stless - statless widget class
+
+Android Studio
+CTRL+Q = Shows documentation
+ALT+ENTER = When a widget is selected, with alt+enter IDE automatically inserts a widget around the selected widget e.g. padding, center
+
+VSCode
+CTRL+. - When widget is selected, you can insert a widget onto a widget with code generation or extract a variable. Or method very fast! Or can convert Stateless to Stateful widget!!
+CTRL+G - Go to line number! CAN IMPROVE SPEED VERY FAST!
+CTRL+SHIFT+\ - Easily find other pair of bracket for {} or () or []
+ALT-> or ALT <- (arrow keys) allows to traverse through the history of where I was before current screen location. If you forget what you were doing
+CTRL+TAB - Switch tabs very fast
+F12 - Jump to definition
+F2 - Refactor the name without even selecting, especially usefl when I have the same variable and OCD strikes to rename it!
+
+
+--- AppBrewery Flutter Course ---
+<-I am Rich App->
+1. Widget tree always starts with MaterialApp where it can have only Text for example and nothing else
+2. To properly format code, always leave ',' in the end of some lines so dartfmt can handle the formatting properly
+3. Scaffold class implements basic material design visual layout structure where appbar can be drawn, snackbars, bottom nav view
+4. AppBar widget adds an appbar XD
+5. Some classes and widgets has the same name so be aware when using them
+6. AssetImage specifies a physically located image while NetworkImage makes an HTTP Request and retrieves it to Image widget.
+7. IMPORTANT INFORMACIONE Target cursor on a widget, press <<<ALT + ENTER>>> and select center widget, wrap with column, row and IDe automatically inserts center or row by wrapping the selected widget 
+<-	MiCard	->
+8. To add assets to the project, add it in pubspec.yaml file. Also yaml indentation is very case sensitive. assets: - images/ adds all assets from images folder
+9. For hot reload to work, we need to have attributes in stateless or stateful widgets
+10. Container creates margin and a padding around a widget inside. If container is empty, it expands to the maximum taking the whole space. 
+	- SafeArea - Creates a widget that avoids operating system interfaces.
+	- margin: EdgeInsets.All sets margin to all sides of the container. EdgeInsets.Symmetric sets to two sides from horizontal and vertical identical values. EdgeInsets.fromLTRB sets to all sides individually EdgeInsets.only uses dart power to choose which sides in arguments to mention
+	- Container can have only width parameter with double.infinity argument there where it takes up the whole screen horizontally
+	- Use a Container when you want to add padding, margins, borders, or background color to its child for example Text widget
+11. Column - Widget that sorts widgets in a column
+	- MainAxisSize.max is default if not changed
+	- When playing with MainAxisSize don't forget that (0, 0) coordinates are at the top left of the screen
+	- mainAxisSize: MainAxisSize.min reduces the amount of constraints column takes by making the widget fit to size instead of taking over all over the column
+	- verticalDirection: selects the ordering of children. Start from the bottom or the top. (VerticalDirection.down is default)
+	- mainAxisAlignment: MainAxisAlignment.start (default spacing) spaceEvenly spaces out children evenly between borders of Column, MainAxisAlignment.center centers it in the middle of the screen
+	- crossAxisAlignment: CrossAxisAlignment.end - lines out horizontally if there is space. .stretch stretches all the children horizontally, useful! 
+12. double.infinity takes up all the space of the screen
+13. SizedBox(width, height) can be used to provide spacing for Column/Row children
+14. CircleAvatar - Rounded image for building user profile
+	- backgroundImage: AssetImage("images/test.jpg"),
+15. TextStyle used for decorating text
+	- fontWeight: FontWeight.bold 
+	- fontFamily: Specify family that is added in pubspec.yaml
+	- fontSize: obviously change size of the text
+16. How to add a font: Add it to pubspec.yaml
+	fonts:
+		- family: Pacifico
+		fonts:
+		- asset: fonts/Pacifico-Regular.ttf
+17. ListTile: 4 parameters only leading: Icon(), title: Text(), subtitle: Text(), trailing: Icon(), isThreeLine: true; onTap: (){print("Hello")};
+18. Icons - You can change their size, color
+19. Card widget - way to present information similar to album, geo location, meal, contact details
+	- margin: great to set up boundaries between multiple cards and screen borders
+	- color: just the color setting
+	- child: you can use Row here or ListTile (preffered way) to create a card representation where all info will go
+	- if you need padding, surround Card child with a Padding class
+20. Divider widget - creates a one pixel line to differentiate content. Usually is put inside a SizedBox widget which does the spacing between content where Divider will be placed
+21. LinearGradiant in the background: Wrap SafeArea with a Container and set its decoration to BoxDecoration widget and inside BoxDecoration set gradient to LinearGradient 
+22. Expanded Widget - used in Row or Column children list. Helps to expand its children and use Rows or columns space. Use flex to determine at what factor expansion is done. For example 3 childs with flex factors 1, 2, 1. Two is going to be bigger than 1 and other 1
+23. To minimize visual confusion when a lot of nested widgets occurs. Define some widgets in a variable and use them
+24. DefaultTextStyle.merge allows to create a default text style that is inherited by all of its child and all subsequent children !!!VERY USEFUL!!!
+<- Dicee Project ->
+25. Sometimes creating your own AppBar or Card is useful, because you can make it very customized and look very seamless and modern!
+26. Use SizedBox more instead of Padding if possible for visual declutter!
+27. To avoid UI code clutter and parenthesis hell, extract code into separate widgets (Stateless Widgets) and NOT METHODS as you duplicate build methods and it reduces performance!
+	Article & Example how to achieve this in a nice manner: 
+	https://iirokrankka.com/2018/12/11/splitting-widgets-to-methods-performance-antipattern/
+	https://github.com/roughike/inKino/blob/development/mobile/lib/ui/event_details/event_backdrop_photo.dart
+28. InheritedWidget - use it for when you want to pass some piece of data throughout the whole app
+29. Flexible Widget - Allows widgets to resize acordingly to Flexible widget parameters. 
+		- Fit: FlexFit.loose (default) uses widget's preferred size; FlexFit.tight forces widget to fill all extra space
+		- flex: a number that determines how much to scale compared to other flexible widgets in the tree | remainingSpace * (flex / totalOfAllFlexValues) | 
+		- child: widget that is being scaled
+		- FLexible vs. Expanded: Flexible resizes widget and expanded changes constraints of the widget while expanding to fill empty space
+30. SizedBox vs. Spacer: Use spacer when you want to create space using a flex property. Use SizedBox when you want to create space using a specific number of pixels
+31. SetState can be empty and still accomplish the same rebuild task, however setState also does checking if you are using it correctly and not using lets say futures in setstate. Checks for errors basically
+32. On stful widget, initState subscribe to streams, change notifiers; on dispose unsibscribe to streams and cancel animations
 * <-----------------------------LEARNING PLAN----------------------------->
 */
-
+//
 + Dart 2.3 Language Tour https://www.dartlang.org/guides/language/language-tour
 + Effective Dart Conventions https://dart.dev/guides/language/effective-dart
 	+ Style Guide
@@ -71,21 +209,22 @@ var list1 = [5, 10, ...?list]; Question mark automatically checks if the list is
 	- Design Guide
 + https://dart.dev/guides/language/sound-dart
 + 30s Dart Tutorials https://www.youtube.com/watch?v=KsXQnpgY2Jc&list=PL3UwowPBo8XGjfIqUG2Nn01MovtbkUhYy
-2. YouTube Tutorials https://www.youtube.com/watch?v=5rtujDjt50I&list=PLlxmoA0rQ-LyHW9voBdNo4gEEIh0SjG-q&index=1
++ YouTube Tutorials https://www.youtube.com/watch?v=5rtujDjt50I&list=PLlxmoA0rQ-LyHW9voBdNo4gEEIh0SjG-q&index=1
 + Intro to Dart for Java Developers https://codelabs.developers.google.com/codelabs/from-java-to-dart/index.html?index=..%2F..index#0
 + https://blog.usejournal.com/beginning-programming-with-dart-beginners-3f0348d8baf8
 + Part 2 https://blog.usejournal.com/intermediate-programming-with-dart-a4b981a1a552
 FLUTTER CODELABS https://flutter.dev/docs/codelabs
 + First Flutter App Part 1 https://flutter.dev/docs/get-started/codelab
 + First Flutter App Part 2 https://codelabs.developers.google.com/codelabs/first-flutter-app-pt2/#0
-6. First Flutter Widget https://www.youtube.com/watch?v=W1pNjxmNHNQ
-6.1 Flutter Layouts https://flutter.dev/docs/development/ui/layout
-6.2 Flutter Interactivity https://flutter.dev/docs/development/ui/interactive
-6.3 Flutter Widget Intro https://flutter.dev/docs/development/ui/widgets-intro
++ First Flutter Widget https://www.youtube.com/watch?v=W1pNjxmNHNQ
++ Flutter Widget Intro https://flutter.dev/docs/development/ui/widgets-intro
++ Flutter Layouts https://flutter.dev/docs/development/ui/layout
++ Flutter Interactivity https://flutter.dev/docs/development/ui/interactive
 7. Flutter for Android Developers https://flutter.dev/docs/get-started/flutter-for/android-devs
-8. Flutter for Junior Devs https://fluttercrashcourse.com/courses/juniordevs
++ Flutter for Junior Devs https://fluttercrashcourse.com/courses/juniordevs
+	- Last video may be useful as it shows how to use imports in dart and create a simple app with 3 dart files decoupled
 9. Flutter The Basics https://fluttercrashcourse.com/courses/basics
-10. Flutter 10 Minute Tutorials https://fluttercrashcourse.com/courses/flutter-ten-minutes
++ !!!List of State Management Approaches https://flutter.dev/docs/development/data-and-backend/state-mgmt/options
 11. Building Beautiful UI with Flutter https://codelabs.developers.google.com/codelabs/flutter/#0
 12. Firebase for Flutter https://codelabs.developers.google.com/codelabs/flutter-firebase/#0
 13. Youtube Tutorial https://www.youtube.com/playlist?list=PLlxmoA0rQ-Lw6tAs2fGFuXGP13-dWdKsB
@@ -93,16 +232,33 @@ FLUTTER CODELABS https://flutter.dev/docs/codelabs
 15. All other codelabs
 16. Widgets https://www.youtube.com/playlist?list=PLOU2XLYxmsIJyiwUPCou_OVTpRIn_8UMd
 17. Flutter in Practice https://www.youtube.com/watch?v=MbUey9oquuU&list=PLhXZp00uXBk5TSY6YOdmpzp1yG3QbFvrN
-
+18. Flutter Udacity Course https://classroom.udacity.com/courses/ud905
++ Flutter Stateful Widget Lifecycle https://flutterbyexample.com/stateful-widget-lifecycle/
+20. Flutter Tutorials for vanilla coding: https://flutterbyexample.com/about-flutter
+21. Flutter Podcasts https://itsallwidgets.com/podcast?filter=all
+22. Flutter Firebase Auth https://www.youtube.com/watch?v=u_Lyx8KJWpg&list=PLNnAcB93JKV_NIGSneTazb9yMpILapEjo
+23. Simple Flutter Calculator https://itnext.io/building-a-calculator-app-in-flutter-824254704fe6
++ Simple Note Taking App https://medium.com/better-programming/simple-notes-app-with-flutter-part-1-ab66e15c8635
 DART
+12. https://www.youtube.com/watch?v=L9onVn8QRaE&list=PLNnAcB93JKV_R1aZc7ZbQRsiEyeDLUpE-
+12.1 Dart Features #1 https://youtu.be/-sqmheL9lmY?list=PLNnAcB93JKV9iZ2cwk9MEx3_JG8BRikMP
+12.2 Dart Features #2 https://youtu.be/mnaN_6465Gk?list=PLNnAcB93JKV9iZ2cwk9MEx3_JG8BRikMP
+13. https://www.youtube.com/playlist?list=PLJbE2Yu2zumDjfrfu8kisK9lQVcpMDDzZ
 14. Library Tour https://dart.dev/guides/libraries/library-tour
 15.1 Futures https://dart.dev/tutorials/language/futures
+	- https://medium.com/@gaspard.mp.social/a-simple-guide-about-flutter-dart-and-asynchronous-programming-a96d9930136c
+	- https://medium.com/flutter-community/a-guide-to-using-futures-in-flutter-for-beginners-ebeddfbfb967
+	- https://www.filledstacks.com/snippet/futures-in-flutter-for-beginners/
+	- https://medium.com/@greg.perry/decode-futurebuilder-bc1a5e6507d4
+	
 15.2 Streams https://dart.dev/tutorials/language/streams
-15. https://flutter.dev/docs/resources/bootstrap-into-dart
+	- Creating streams https://dart.dev/articles/libraries/creating-streams
 + https://itnext.io/learn-dart-before-you-flutter-d1c0be6cf892
+16. Dart+Shelf+Postgres backend https://medium.com/swlh/server-side-dart-with-postgresql-142e9eec1ed1
 17. Dart Server-side Framework https://www.youtube.com/watch?v=vvDomA-ru3E&list=PL3UwowPBo8XEDvDDY7fpurOLt7hhYMBlx
 18. Dart Server Side App https://dart.dev/tutorials/server/httpserver
 19. Another Dart Server Side tutorial https://dart-lang.github.io/server/
+19.1 More Server Side tutorial https://www.youtube.com/watch?v=UmqivmfNqE4&list=PL0iaWPijZ-OedUA4aNGyxpPaHeiZkVVGx
 20. AngularDart https://itnext.io/angulardart-tutorial-lets-build-a-bookmark-manager-part-1-67327fbb7e3d
 https://dart.dev/tutorials
 
@@ -111,20 +267,24 @@ Async Part 1 https://news.dartlang.org/2016/03/unboxing-packages-async-part-1.ht
 Async Part 2 https://news.dartlang.org/2016/03/unboxing-packages-async-part-2.html
 Async Part 3 https://news.dartlang.org/2016/04/unboxing-packages-async-part-3.html
 Unboxing Collections https://news.dartlang.org/2016/01/unboxing-packages-collection.html
-Creating Streams https://dart.dev/articles/libraries/creating-streams
 Introduction to dart:io package https://dart.dev/articles/libraries/dart-io
 https://codingwithjoe.com/dart-fundamentals-async-await/
 https://codingwithjoe.com/dart-fundamentals-isolates/
 Dart Mixins https://github.com/dart-lang/language/blob/master/accepted/2.1/super-mixins/feature-specification.md#dart-2-mixin-declarations
 More about Mixins https://medium.com/flutter-community/dart-what-are-mixins-3a72344011f3
+More more about Mixins https://codingwithjoe.com/dart-fundamentals-mixins/
 Dart Generic Methods https://github.com/dart-lang/sdk/blob/master/pkg/dev_compiler/doc/GENERIC_METHODS.md
 Dart Lesser Known Fetaures https://github.com/dart-lang/sdk/blob/master/docs/newsletter/20170915.md#synchronous-async-start
 Dart Language Specifications https://dart.dev/guides/language/spec
 
 Dart Web Scraping https://creativebracket.com/write-your-first-web-scraper/
 Dart Backend With Firebase https://github.com/FirebaseExtended/firebase-dart
+Dart Annotations https://medium.com/swlh/dart-annotations-a-simple-intro-to-reflection-c654275cc967
+Dart Injecting using Zones https://medium.com/@philippschiffmann/dependency-injection-in-dart-using-zones-45d6028eb1da
 
 Flutter & Firebase Course https://fireship.io/courses/
+
+
 
 /*
 * <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
@@ -138,57 +298,106 @@ Flutter & Firebase Course https://fireship.io/courses/
 
 <-----------APP ARCHITECTURE----------->
 Bloc
+	- http://flutterdevs.com/blog/bloc-pattern-in-flutter-part-1/
 	- https://medium.com/@artemsidorenko/bloc-architecture-in-flutter-a-modern-architectural-approach-and-how-we-use-it-at-jimdo-bea143b56d01
 	- https://medium.com/flutter-community/reactive-programming-streams-bloc-6f0d2bd2d248 HELPED SOMEONE A LOT
 	- https://medium.com/flutterpub/architecting-your-flutter-project-bd04e144a8f1 
 	- https://medium.freecodecamp.org/how-to-handle-state-in-flutter-using-the-bloc-pattern-8ed2f1e49a13
 	- Block & RxDart https://medium.com/flutter-community/why-use-rxdart-and-how-we-can-use-with-bloc-pattern-in-flutter-a64ca2c7c52d
-	- https://medium.com/flutterpub/effective-bloc-pattern-45c36d76d5fe
+	- !!!https://medium.com/flutterpub/effective-bloc-pattern-45c36d76d5fe
 	- https://medium.com/free-code-camp/using-streams-blocs-and-sqlite-in-flutter-2e59e1f7cdce
 	- https://medium.com/coding-with-flutter/widget-async-bloc-service-a-practical-architecture-for-flutter-apps-250a28f9251b
+	- https://medium.com/flutter-community/flutter-bloc-pattern-for-dummies-like-me-c22d40f05a56
+	- https://blog.soshace.com/en/programming-en/understanding-flutter-bloc-pattern/
 Redux
 	- Flutter + Redux App Architecture https://hackernoon.com/flutter-redux-how-to-make-shopping-list-app-1cd315e79b65
 	- https://hillel.dev/2018/08/24/ongoing-adventures-with-flutter-and-redux/
 Provider
 	- https://medium.com/flutter-community/flutter-pragmatic-state-management-using-provider-5c1129f9b5bb
 	- https://medium.com/flutter-community/flutter-statemanagement-with-provider-ee251bbc5ac1
+	- https://medium.com/fluttervn/simplify-flutter-state-management-with-provider-and-bloc-dcfad49bedf2
 
 RxVMS
 	- https://www.burkharts.net/apps/blog/rxvms-a-practical-architecture-for-flutter-apps/
+
+Scoped model
+	- https://medium.com/filledstacks/flutter-architecture-scopedmodel-a-complete-guide-to-a-real-world-setup-56501747e179
+	- https://medium.com/flutter-community/flutter-architecture-scopedmodel-a-complete-guide-to-real-world-architecture-205a24674964
+	- https://skillsmatter.com/skillscasts/13602-learn-scoped-model-by-building-scoped-model
 
 - https://hillel.dev/2018/08/10/an-architectural-review-of-the-invoice-ninja-flutter-app/
 - https://medium.com/flutter-community/let-me-help-you-to-understand-and-choose-a-state-management-solution-for-your-app-9ffeac834ee3
 - https://medium.com/flutter-community/flutter-oneyearchallenge-scoped-model-vs-bloc-pattern-vs-states-rebuilder-23ba11813a4f
 - https://medium.com/@dsrenesanse/flutter-architecture-pattern-vms-43c2defec03a
-- https://medium.com/filledstacks/flutter-architecture-scopedmodel-a-complete-guide-to-a-real-world-setup-56501747e179
-- https://medium.com/flutter-community/flutter-architecture-scopedmodel-a-complete-guide-to-real-world-architecture-205a24674964
 - https://medium.com/flutter-community/flutter-code-organization-de3a4c219149
 - https://medium.com/flutter-community/flutter-app-architecture-101-vanilla-scoped-model-bloc-7eff7b2baf7e
 - https://medium.com/@c_innovative/simple-firebase-login-flow-in-flutter-6f44c2b5c58a
+- https://www.paddo.org/flutter-architecture-part-1/
 
 <-----------LIBRARIES-------------->
 - Server-side HTTP server framework to expose web api with Dart https://github.com/stablekernel/aqueduct
+- Moor (Android Room-like) ORM https://pub.dev/packages/moor_flutter
+- Flutter Calendars https://medium.com/flutter-community/flutter-calendar-library-comparison-c08d5ba3cc9e
+- Flutter Ratings Widget https://pub.dev/packages/flutter_rating_bar
+- Circle Wave Progress - https://github.com/nextfunc/circle_wave_progress
+- Charts - https://github.com/imaNNeoFighT/fl_chart
+- More charts - https://pub.dev/packages/syncfusion_flutter_charts
+- Alerting Library (Toast, Snackbar, Dialog) https://pub.dev/packages/flash
 
 <-----------TOOLING-------------->
 - CI/CD for Flutter https://blog.codemagic.io/
 - Animating for Flutter https://www.2dimensions.com/
 - Play Store Quality Screenshot Maker https://app-mockup.com/
+- JSON to Dart https://app.quicktype.io/
+- Flowcharts - https://www.draw.io/
+- Icon Generator - https://appicon.co/
+- Flutter General Cheatsheet - https://gist.github.com/matteocrippa/3a8b84c7b49c10bc070e58a66860e83f
+- Flutter Layout Cheatsheet - https://medium.com/flutter-community/flutter-layout-cheat-sheet-5363348d037e
+- Flutter Animation Cheatsheet - https://medium.com/flutter-community/flutter-animations-cheat-sheet-7f8cebfb850c
+- Flutter Column/Row Cheatsheet - https://medium.com/jlouage/flutter-row-column-cheat-sheet-78c38d242041
+- Material Design Palette - materialpalette.com
 
 <-----------Articles----------->
 
+TESTING:
+	- https://flutter.dev/docs/cookbook/testing/widget/introduction
+	- https://flutter.dev/docs/testing
+	- https://medium.com/@adityadroid/60-days-of-flutter-day-4-5-widget-testing-with-flutter-a30236dd04fc
+	- https://medium.com/@keziairenetesiman/increase-productivity-with-test-driven-development-d311c3a62838
+
+FIREBASE:
+	- https://medium.com/flutter-community/flutter-firebase-realtime-database-crud-operations-using-provider-c242a01f6a10
+
 Articles
-	- https://medium.com/mobindustry/react-native-vs-flutter-what-to-choose-for-your-next-project-e7c9319ed711
+	+ https://medium.com/mobindustry/react-native-vs-flutter-what-to-choose-for-your-next-project-e7c9319ed711
 	- https://medium.com/@michael.krol/simple-recipes-app-made-in-flutter-introduction-c80964167a19
 	- https://medium.com/@studymongolian/simple-sqflite-database-example-in-flutter-e56a5aaa3f91
 	- https://medium.com/@dev.n/flutter-challenge-todo-app-concept-bd36107aa291
 	- https://hackernoon.com/what-it-was-like-to-write-a-full-blown-flutter-app-330d8202825b
 	- https://medium.com/flutter-io/managing-visibility-in-flutter-f558588adefe
-	- https://medium.com/flutter-community/a-guide-to-using-futures-in-flutter-for-beginners-ebeddfbfb967
 	- https://www.reddit.com/r/FlutterDev/comments/btuod4/less_boilerplate_code_in_flutter_using_functional/
-	- https://www.filledstacks.com/snippet/futures-in-flutter-for-beginners/
 	- https://medium.com/aubergine-solutions/creating-a-note-taking-app-in-flutter-dart-f50852993cd0
-	- https://skillsmatter.com/skillscasts/13602-learn-scoped-model-by-building-scoped-model
+	- https://medium.com/@eibaan_54644/better-errors-messages-for-flutter-a21c53982a99
+	- https://medium.com/@studymongolian/adding-a-border-to-a-widget-in-flutter-d387bc5d7cff
+	- https://medium.com/flutter-community/flutter-effectively-scale-ui-according-to-different-screen-sizes-2cb7c115ea0a
+	- https://medium.com/swlh/how-to-make-http-requests-in-flutter-d12e98ee1cef
+	- https://medium.com/@DakshHub/flutter-displaying-dynamic-contents-using-listview-builder-f2cedb1a19fb
+	- https://medium.com/@greg.perry/decode-scaffold-30dcb6913077
+	- https://medium.com/@greg.perry/decode-row-column-8b88ad2d758c
+	- https://medium.com/@greg.perry/decode-listview-a0bc4b90f82d
+	- https://hackernoon.com/making-the-most-of-flutter-from-basics-to-customization-433171581d01
+	- https://medium.com/@lukeaf/nuanced-ui-development-in-flutter-3415983bb62c
+	- https://medium.com/meeve/build-variants-in-flutter-for-multiple-backend-environments-7e139128949b
+	- https://medium.com/fluttery/understanding-state-management-and-why-you-never-will-dd84b624d0e
+	- https://medium.com/flutter-community/mixins-and-base-classes-a-recipe-for-success-in-flutter-bc3fbb5da670
+	- https://medium.com/flutter-community/build-a-chatbot-in-20-minutes-using-flutter-and-dialogflow-8e9af1014463
+	- https://medium.com/@promise_amadi/9-easiest-steps-to-build-photo-diary-app-using-flutter-and-cloudinary-8f190faa1441
+	- https://medium.com/fluttervn/run-your-code-in-background-easily-with-flutter-2e98d94f30de
+	- https://medium.com/@d.panaite92/building-a-radar-chart-with-flutter-and-custom-painter-384c005002f9
 
+WEBVIEW
+	- https://medium.com/@mksl/flutter-talking-to-a-webview-747da85a0815
+	
 Resources
 	- Beginning point https://ayusch.com/flutter/
 	- https://diveintoflutter.blogspot.com/

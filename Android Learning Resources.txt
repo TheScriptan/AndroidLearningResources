@@ -113,7 +113,7 @@ URIMatcher Matches URI to an integer code, to ensure ContentProvider doesnt try 
 	- If I want to edit stored values inside LiveData I should use MutableLiveData setValue(T) - sets value and notifies attached observers, must be ran in main thread, if I want to run in a background thread, run postValue(T): example  
 	liveData.postValue("a");
 	liveData.setValue("b"); 
-	here first setValue would be executed and value would be be, but then postValue executes and overrides value 'b' with 'a'
+	here first setValue would be executed and value would be b, but then postValue executes and overrides value 'b' with 'a'
 	- Note: You must call the setValue(T) method to update the LiveData object from the main thread. If the code is executed in a worker thread, you can use   the postValue(T) method instead to update the LiveData object.
 	 Note: LiveData and it's subclasses contain both a setValue() and a postValue() method. The difference is that setValue() must be called from the main thread. postValue() is for when the call occurs off of the main thread. You'll see why you use postValue() next.
 	 - When attaching observers to LiveData, ensure that LiveData instance isn't changing, because then you need to attach a new observer and that would be bad practice

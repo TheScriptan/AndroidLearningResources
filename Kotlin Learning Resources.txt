@@ -145,10 +145,33 @@ COLLECTIONS
     }
 31. Inline functions are important if you are over-using lambdas. Because when fun is using lambdas, new object is always created and it allocates a heap, while inline function copies the lambda code block to the place where it is being called
 32. var i1: Int = 5 is Int in Kotlin, int in Java; var i2: Int? = 4 is Int? in Kotlin, Integer in Java
+33. Lateinit var promises compiler that it will be initialized before usage
 
 
+/*
+ * <-----------------------------Kotlin Android Learnings----------------------------->
+ */
 
-
+ 1. Data Binding - allows to reduce findViewById usage that reduces performance by traversing each view in the app. To use it first: 
+    1) Enable it in gradle
+    2) Wrap current activity layout with <layout>
+    3) Create binding object: ActivityMainBinding = DataBindingUtility.setContentView(this, R.layout.activity_main)
+    4) To use binding: binding.apply (view1.text = ay; view2.text = "4")
+    Steps to bind views to data:
+    1) Add <data> block inside <layout> block
+    2) Define <variable> in <data> block with name and type attributes
+    3) Create class in activity and bind it by binding.dataName = dataName
+    4) In XML views bind data using "@{dataName.username} 
+    Other
+    1) Once you wrap layout in <layout> then it generates MyViewBinding that can be used in code
+2. Navigation Architecture Component.
+    2.1 Safe Args generates code and classes that helps detect compil-time errors when using Bundles for key-value transactions between Fragment A and Fragment B
+    2.2 To use SafeArgs in code and simplify specifying action ID to go to another fragment, use generated NavDirection classes which helps you to remember better what action ID you need to use 
+    FROM view.findNavController().navigate(R.id.actionGoThereA)
+    TO view.findNavController().navigate(GoThereDirections.GoThereA())
+    2.3 To send values from A to B fragments, first in NavGraph specify on receiver fragment what he wants to get from sending fragment in Attributes -> Arguments and those values will become argument for NavDirection methods used in navController.navigate
+3. Timber - a logging tool better than log.x. To use it, Application class is needed, as timber needs control through the whole app. Timber automatically adds TAG to the log, you do not need to specify TAG static constant
+4. Lifecycle Jetpack component. Allows classes to observe Lifecycle owners which are activities or fragments. Simply extend a class with a LifecycleObserver and pass in a Lifecycle object which would represent a fragment or activity that will be observed. Next annotate methods and define on what Lifecycle event they should be triggered by Lifecycle library
 /*
  * <-----------------------------LEARNING PLAN----------------------------->
  */
@@ -164,7 +187,7 @@ OR
 7. https://codelabs.developers.google.com/codelabs/android-paging/#2
 8. https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/composing-suspending-functions.md
 8.1 https://codelabs.developers.google.com/codelabs/kotlin-coroutines/#0
-9. https://classroom.udacity.com/courses/ud888
+9. https://classroom.udacity.com/courses/ud888 ?
 10. https://developer.android.com/jetpack/docs/guide
 11. Kotlin SOLID https://blog.joshua-greenwood.com/the-solid-principles-and-kotlin/?utm_source=reddit&utm_medium=reddit&utm_campaign=the-solid-principles-and-kotlin
 12. Deepen Language Knowledge
@@ -176,6 +199,12 @@ OR
 12.4 Lambdas https://kotlinlang.org/docs/reference/lambdas.html
 12.5 Delegates and Delegated Properties
 12.10 Kotlin Coding Conventions and Tips
+13. Data Binding Documentation
+14. Google Maps (GPS)
+15. Blutooth Gatt
+16. Realm 
+17. LocalBroadcastManager
+18. Koin
 
 OPTIONAL
 - https://www.raywenderlich.com/android/learn

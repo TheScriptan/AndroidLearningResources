@@ -713,6 +713,7 @@ SOFTWARE RELATED ARTICLES TO READ
 - https://towardsdatascience.com/10-common-software-architectural-patterns-in-a-nutshell-a0b47a1e9013
 - https://medium.com/better-programming/the-marks-of-a-true-senior-developer-d5f3b11c3375
 - https://medium.com/better-programming/top-signs-of-an-over-experienced-programmer-22bbe0b57663
+- https://slack.engineering/client-consistency-at-slack-beyond-libslack-c9cfbe778fb7
 
 - Some advanced stuff https://medium.com/@vardaansh1/an-introduction-to-android-interprocess-communication-and-common-pitfalls-ac4dfeddf89b
 

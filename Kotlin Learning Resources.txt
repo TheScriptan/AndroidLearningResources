@@ -162,6 +162,15 @@ COLLECTIONS
     2) Define <variable> in <data> block with name and type attributes
     3) Create class in activity and bind it by binding.dataName = dataName
     4) In XML views bind data using "@{dataName.username} 
+    Listener Binding:
+        ViewModels
+    1) Attach gameViewModel variable in <layout tag>
+    2) Attach gameViewModel to binding.gameViewModel
+    3) Let's say on each button create onClick attribute and specify a lambda method like this: onClick="@{()-> gameViewModel.endGame()}"
+        LiveData
+    1) Assign on TextView text attribute this: text="@{gameViewModel.text}" and Data Binding creates observer automatically
+    2) let binding object know who is the lifecycle owner with this line
+        binding.lifecycleOwner = this
     Other
     1) Once you wrap layout in <layout> then it generates MyViewBinding that can be used in code
 2. Navigation Architecture Component.
@@ -172,6 +181,10 @@ COLLECTIONS
     2.3 To send values from A to B fragments, first in NavGraph specify on receiver fragment what he wants to get from sending fragment in Attributes -> Arguments and those values will become argument for NavDirection methods used in navController.navigate
 3. Timber - a logging tool better than log.x. To use it, Application class is needed, as timber needs control through the whole app. Timber automatically adds TAG to the log, you do not need to specify TAG static constant
 4. Lifecycle Jetpack component. Allows classes to observe Lifecycle owners which are activities or fragments. Simply extend a class with a LifecycleObserver and pass in a Lifecycle object which would represent a fragment or activity that will be observed. Next annotate methods and define on what Lifecycle event they should be triggered by Lifecycle library
+5. ViewModels contains UI variables, so Ui can do configuration changes without losing. Also business logic should be in ViewModel, so let's say you got a list of random words, you need to shuffle them in ViewModel
+    5.1 To create ViewModel with an constructor, use ViewModelFactory
+6. LiveData. To encapsulate LiveData and return to UI only LiveData you need to values: private val _score = MutableLiveData<Int>() && val score: LiveData<Int> get() = _score and setters with getters in ViewModel
+
 /*
  * <-----------------------------LEARNING PLAN----------------------------->
  */

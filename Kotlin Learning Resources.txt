@@ -129,7 +129,7 @@ COLLECTIONS
     var p = Person("Ainis", 21)
     with(p) {println("$name $age")}
 26. To check what instance is use 'is' keyword if(obj is String) println("You got string")
-27. Elvis operator ?: is if not null and else shorthand
+27. Elvis operator ?: is if not null and else shorthand. If not null, return value, if null, do something that's specified
     println(files?.size ?: "empty")
 28. 'if' and 'try/catch' can be written as expressions
     if: val result = if(param -- 1) "one" else if(param == 2) "two" else "three"
@@ -146,8 +146,21 @@ COLLECTIONS
 31. Inline functions are important if you are over-using lambdas. Because when fun is using lambdas, new object is always created and it allocates a heap, while inline function copies the lambda code block to the place where it is being called
 32. var i1: Int = 5 is Int in Kotlin, int in Java; var i2: Int? = 4 is Int? in Kotlin, Integer in Java
 33. Lateinit var promises compiler that it will be initialized before usage
-
-
+    33.1 !::INSTANCE.isInitialized returns true if INSTANCE is initialized, false if not 
+34. Companion objects allow clients to access the methods for creating or getting an instance without instantiating a class. ???
+35. @Volatility: Values with volatility will not be cached, and all reads and writes will be done to and from the main memory. This helps to make sure the value is always uo-to-date and the same to all execution threads. It means that changes made by one thread to Volatile value are visible to all other threads immediately, and you don't get a situation where, say two threads each update the same entitity in a cache, which would createa a problem.
+36. RequireNotNull(this.nullableVariable).doSomething - This function throws IllegalArgumentException if value is null
+37. .let method extension: myItem?.let {//do this} is SAME as if(myItem != null) {//do this}
+38. Lazy initialization - delays initialization until object is required. In multithreaded code, lazy initialized objects must be synchronized to guard against race conditions
+39. Separate DTO with Domain models. DTO should have only network model related fields and have an extension method to create from DTO object a Domain Model object that can be used by the user in some way. This promotes separation of concerns between Network received data and domain models
+40. Iterating through an array or a list you can get index and element in for loop
+    for((index, element) in myList.withIndex()) {println("Index: $index Element: $element")}
+41. Pairs and Triples can be used to return more than one value in a function! That's a game changer! ;o No need to create data classes that have two values that I want a function to return
+42. Generics <T> by default stands for the nullable Any? and allows passing null in Generics, to not allow it, define Any type for generic: class Aquarium<T: Any>(val waterSupply: T)
+    42.1 In this case Any is a generic constraint. You can make generic constraints for specific. If I have a big parent class with many children, I can define a generic constraint and allow only specific classes to be used as a generic
+     class Aquarium<T: WaterSupply>(val waterSupply: T)
+43. If really needed you can combine higher order functions with extensions and have an extension method inside function's parameters ;o
+44. SAM aka Single Abstract Method is an interface with one method. Very simple, think about Java interfaces like Runnble having run() and Callable having call()
 /*
  * <-----------------------------Kotlin Android Learnings----------------------------->
  */
@@ -162,8 +175,7 @@ COLLECTIONS
     2) Define <variable> in <data> block with name and type attributes
     3) Create class in activity and bind it by binding.dataName = dataName
     4) In XML views bind data using "@{dataName.username} 
-    Listener Binding:
-        ViewModels
+    Listener Binding: ViewModels
     1) Attach gameViewModel variable in <layout tag>
     2) Attach gameViewModel to binding.gameViewModel
     3) Let's say on each button create onClick attribute and specify a lambda method like this: onClick="@{()-> gameViewModel.endGame()}"
@@ -173,6 +185,7 @@ COLLECTIONS
         binding.lifecycleOwner = this
     Other
     1) Once you wrap layout in <layout> then it generates MyViewBinding that can be used in code
+    2) Sometimes Generated code is not compiled, so Make Project to compile it!
 2. Navigation Architecture Component.
     2.1 Safe Args generates code and classes that helps detect compil-time errors when using Bundles for key-value transactions between Fragment A and Fragment B
     2.2 To use SafeArgs in code and simplify specifying action ID to go to another fragment, use generated NavDirection classes which helps you to remember better what action ID you need to use 
@@ -184,6 +197,51 @@ COLLECTIONS
 5. ViewModels contains UI variables, so Ui can do configuration changes without losing. Also business logic should be in ViewModel, so let's say you got a list of random words, you need to shuffle them in ViewModel
     5.1 To create ViewModel with an constructor, use ViewModelFactory
 6. LiveData. To encapsulate LiveData and return to UI only LiveData you need to values: private val _score = MutableLiveData<Int>() && val score: LiveData<Int> get() = _score and setters with getters in ViewModel
+7. BottomNavigationView combined with Nav component is added simply. Just match menu item ids with Navigation Graphs IDs. Find on MainActivity BottomNavView and setUpWithNavController. 
+https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomnavigationview-with-youtube-or-instagram-like
+8. Room. When defining DAO and returning an individual entity, make it nullable. Not sure why tho. To handle cases for empty tables and data cleared situations
+    8.1 To get recent data, SELECT * FROM <table-name> ORDER BY <id> DESC LIMIT 1
+    8.2 Process to make RoomDB: Create data class -> Create DAO object -> Create RoomDB class 
+        How to create RoomDB class: public abstract class -> initialize DAOs inside class block -> companion object -> define INSTANCE that is volatile
+    8.3 It is a good practice to decouple domain model, with network model and database model. All three of these models are similar, however each is for its own cases. It helps to structure in a bigger app. DTO also considered as Network Model would have two extension methods: 1) NetworkModel -> DomainModel; 2) NetworkModel -> DatabaseModel; Database model would have one extension: 1) DatabaseModel -> Domain Model. If there was a POST, then I guess DatabaseModel could have an extension to NetworkModel to post new data
+9. JUnit Tests. 
+    @Before - What to do before testing. This is a place to initialize let's say a Room database
+    @After - Place to close connections with database, network, et cetera
+    @Test - Is a place where you write your test and to asserts
+    @Throws(Exception::class) - Write this below @Test annotation to ensure you get a Exception
+    @RunWith(AndroidJUnit4::class)
+10. Coroutines. Coroutines are the background tasks. They need three things: Scope, Dispatcher and Job. Usually scope is ui, but job is dispatched to IO thread pool.
+    10.1 To create a coroutine. First create a Job, then a CoroutineScope(Dispatchers.Main + myJob). Then use scope to launch a coroutine and use withContext to define using IO context instead of blocking main UI thread.
+11. Transformations.map can be very useful when making button states. COmbined with data binding and view models few lines of code are required to define when button should be enabled or disabled. Have a viewmodel where you define transformed val buttonVisible values that goes like this:
+    val startButtonVisible = Transformations.map(tonight) {it == null} this will return boolean if tonight value is null
+    Attach this value via Data Bindings on XML layout button android:enabled and that's it
+12. RecyclerView. You can add a layoutManager inside the XML ;o
+    12.1 Adapter's onCreateViewHolder viewType parameter is used when there are multiple views in the same RV. E.g. text, image and photo in one VH. I can have headers also. I could make const val 0 for header, const val dataItem1 1 and have header to tell what data user is going to see while scrolling, and if I want to craete more headers, just need to use Sealed class for abstracting headers and data into one class, create viewholder and xml file for header or new data item to be displayed. Update adapter and methods to use RecyclerView.ViewHolder. Return correct type in onCreateViewHolder.
+    12.2 To create a data setter, you can use Kotlin setter where variable was declared ;o just set(value) {field = value; notifyDataSetChanged()}
+    12.3 NotifyDataSetChanged is inefficient. Should use DiffUtil that follows Eugene's Diff algorithm to find difference between new and old list in order to update changed item faster without stuttering in large datasets. DiffUtil combined with ListAdapter that extends RV and requires to generics - data model (POJO) and ViewHolder
+    12.4 LayoutManager handles what layout should be used, Linear or Grid like
+    12.5 Adapter's job is to deal with adapting data for display, not with app logic! 
+    12.6 To handle clicks on recyclerview, attach click listener to list items in VH, handle clicks in ViewModel. 
+         1) Create a listener that takes val ClickListener: (passVal: String) -> Unit
+         2) Set click listener on android:onClick with DataBinding
+         3) Pass click Listener to RVAdapter
+         4) pass listener in onBindViewHolder to ViewModel
+         5) attach clicklistener to ViewHolder layout via Data Binding like binding.clickListener = clickListener
+         6) Implement clicklistener when initializing an adapter
+    12.7 Create VIEWMODELFACTORIES inside ViewModel class as a inner class. Creation of VM would look like this: viewModel = ViewModelProviders.of(this, MyViewModel.Factory(someArgument)).get(MyViewModel::class.java)
+13. Convert parameter to receiver! VERY USEFUL!! Let's say you extract a function from RV Adapter onBindViewHolder to a fun bind(holder: VH, item: SleepNight). Put cursor on holder, press alt+enter and choose convert parameter to receiver. It makes an extension method for ViewHolder class we made and simplifies the code!
+14. To convert XML ConstraintLayout to data binding, put cursor on ConstraintLayout tag, press alt+enter and choose convert to data binding
+15. Stateful navigation explained to myself: 
+    First you declare private mutablelivedata and public livedata with value that will be observed in a fragment that will change itself soon. define two methods - 1) which enters a value to mutablelivedata 2) which nullifies value from mutablelivedata. This is done so when observer is using newValue?.let{} it checks if its not null, execute, if it is, do not execute let code block. Add trigger function in a place where it will be triggered (e.g. button onClick via databinding) then value has something in it, which triggers observer that is added in a fragment, and what observer does is navigate to a new fragment and once navigation finishes call nullifying method that makes value null so when observer is notified again, he does not call the code to navigate to a fragment that you already exist in 
+16. Retrofit. Retrofit and ObjectApi instances can stay in ApiServices.kt file. where you define converter factory, call  adapter factory, const val base url and API endpoints app will call to.
+    39.1 Call adapters add the ability for retrofit to create APi's that return something other than the default Call class. Instead of returning Call<String> now we will do Deferred<String> in API Calls to help api calls work with coroutines. Since deferred inherits from Job. To use deferred object, you MUST BE INSIDE a coroutine!
+17. Glide. To add placeholder and error images, use .apply(RequestOptions().placeholder(img).error(errorImg))
+18. WorkManager deferrable and guaranteed execution. Deferrable means that it is not required to run immediately, e.g. sending analytical data to server or syncing db in the background. Guaranteed execution means that task will run even if the ap exits or the device restarts
+    18.1 WorkManager classes
+        - Worker: This is the place where background work is done in an overriden method doWork. Class must extend Worker
+        - WorkRequest: Use WorkRequest to configure how and when to run the worker task. With the help of Constraints e.g. WiFi connected, device charging et cetera. There are two types of WorkRequests: 1) OneTimeWorkRequest: a task that will happen only once; 
+        2) PeriodicWorkRequest: Work that can repeat at intervals (minimum interval = 15 min)
+        - WorkManager: Schedules and runs WorkRequest. It spreads the load on system resources.
 
 /*
  * <-----------------------------LEARNING PLAN----------------------------->
@@ -193,34 +251,35 @@ COLLECTIONS
 - https://classroom.udacity.com/courses/ud9011
 + https://github.com/Zhuinden/guide-to-kotlin/wiki
 + https://medium.com/@renaudcerrato/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7
-5. https://classroom.udacity.com/courses/ud9012
-OR
-5. https://codelabs.developers.google.com/android-kotlin-fundamentals/
-6. https://codelabs.developers.google.com/codelabs/android-room-with-a-view-kotlin/#0
+- https://classroom.udacity.com/courses/ud9012
++ https://codelabs.developers.google.com/android-kotlin-fundamentals/
++ LocalBroadcastManager
++ https://developer.android.com/courses/kotlin-bootcamp/overview IMPROVE KOTLIN KNOWLEDGE EVEN MORE
++ https://codelabs.developers.google.com/codelabs/android-room-with-a-view-kotlin/#0
 7. https://codelabs.developers.google.com/codelabs/android-paging/#2
-8. https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/composing-suspending-functions.md
-8.1 https://codelabs.developers.google.com/codelabs/kotlin-coroutines/#0
-9. https://classroom.udacity.com/courses/ud888 ?
-10. https://developer.android.com/jetpack/docs/guide
-11. Kotlin SOLID https://blog.joshua-greenwood.com/the-solid-principles-and-kotlin/?utm_source=reddit&utm_medium=reddit&utm_campaign=the-solid-principles-and-kotlin
++ https://developer.android.com/jetpack/docs/guide
++ Kotlin SOLID https://blog.joshua-greenwood.com/the-solid-principles-and-kotlin/?utm_source=reddit&utm_medium=reddit&utm_campaign=the-solid-principles-and-kotlin
+11. Big tutorial with many things to learn https://www.baruckis.com/android/kriptofolio-app-series/
 12. Deepen Language Knowledge
-12.-1 Lazy Property
++ Lazy Property
 12.0 Null-Safety https://kotlinlang.org/docs/reference/null-safety.html
 12.1 Iterators
-12.2 Sealed Classes
++ Sealed Classes
 12.3 Objects + Companions https://antonioleiva.com/objects-kotlin/
 12.4 Lambdas https://kotlinlang.org/docs/reference/lambdas.html
 12.5 Delegates and Delegated Properties
+12.6 More about generics https://kotlinlang.org/docs/reference/generics.html
 12.10 Kotlin Coding Conventions and Tips
 13. Data Binding Documentation
 14. Google Maps (GPS)
 15. Blutooth Gatt
-16. Realm 
-17. LocalBroadcastManager
 18. Koin
-
-OPTIONAL
-- https://www.raywenderlich.com/android/learn
+    18.1 https://medium.com/@gunayadem.dev/boost-your-android-apps-with-koin-and-coroutines-using-mvvm-in-kotlin-d30fe436ab4c
++ WorkManager
+- Coroutines
+    - https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/composing-suspending-functions.md
+    - https://codelabs.developers.google.com/codelabs/kotlin-coroutines/#0
+    - https://medium.com/androiddevelopers/easy-coroutines-in-android-viewmodelscope-25bffb605471
 
 /*
 * <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
@@ -233,14 +292,15 @@ OPTIONAL
 - RxJava + Kotlin https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
 
 <-----------ARCHITECTURE-------------->
-- 5 Part Architecture tutorial to build an app, sadly in Kotlin https://www.baruckis.com/android/kriptofolio-app-series/
 - MVVM FOR KOTLIN VERY GOOD https://resocoder.com/2018/09/07/mvvm-on-android-crash-course-kotlin-android-architecture-components/ 
-
+- MVVM KOTLIN https://proandroiddev.com/android-architecture-starring-kotlin-coroutines-jetpack-mvvm-room-paging-retrofit-and-dagger-7749b2bae5f7
+- MVVM https://medium.com/@cdmunoz/offline-first-android-app-with-mvvm-dagger2-rxjava-livedata-and-room-25de4e1ada14
 
 <-----------ARTICLES-------------->
 - Retrofit, Coroutines and Kotlin https://android.jlelse.eu/android-networking-in-2019-retrofit-with-kotlins-coroutines-aefe82c4d777
 - Kotlin Backend + GCloud With Android https://www.raywenderlich.com/4656683-build-an-api-with-kotlin-on-google-cloud-platform
 <-----------USEFUL-------------->
+- WOrking with the Soft Keyboard https://guides.codepath.com/android/Working-with-the-Soft-Keyboard
 - Kotlin Design Patterns https://github.com/dbacinski/Design-Patterns-In-Kotlin
 - From Java to Kotlin Cheat Sheet https://fabiomsr.github.io/from-java-to-kotlin/
 - Kotlin Style-guide and reference for common mistakes https://www.reddit.com/r/androiddev/comments/77sl1c/devs_who_review_kotlin_regularly_what_are_things/dorsk3i/

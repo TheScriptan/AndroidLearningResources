@@ -519,11 +519,10 @@ SOFTWARE ENGINEERING THEORY
 - https://plato.stanford.edu/entries/technology/
 <------------------JAVA STUFF TO LEARN----------------->
 
-- Java Lambda Expression
-	- https://codingwithmitch.com/blog/java-lambdas-for-android-development/
++ Java Lambda Expression https://codingwithmitch.com/blog/java-lambdas-for-android-development/
 - Java annotations
-- Map, HashMap, Tree
-- Java Volatile & Synchronized keywords
++ Map, HashMap, Tree
++ Java Volatile & Synchronized keywords
 - Callback class
 - Java Object Relationships Inheritance https://youtu.be/p5aLAcMIK7M?list=LLpkh0DQ4SbSREpdiYK2Cx7Q
 
@@ -751,8 +750,8 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 + https://productcoalition.com/the-art-of-the-strategic-product-roadmap-c881f261b4eb
 + https://medium.com/s/story/dear-founder-maynard-webb-advice-excerpt-letter-to-a-would-be-entrepreneur-baeb0235ab88
 + https://medium.com/s/story/to-make-your-business-more-efficient-take-a-lesson-from-bee-colonies-7c5ffd0ba4c5
-- https://elemental.medium.com/how-im-preparing-for-the-dementia-i-believe-i-ll-get-9bf265816792
-- https://elemental.medium.com/why-stravas-ceo-doesn-t-work-evenings-or-weekends-a72093618711
++ https://elemental.medium.com/how-im-preparing-for-the-dementia-i-believe-i-ll-get-9bf265816792
++ https://elemental.medium.com/why-stravas-ceo-doesn-t-work-evenings-or-weekends-a72093618711
 - https://onezero.medium.com/the-death-of-boredom-3001a24dc709
 - https://elemental.medium.com/strategies-for-self-care-that-really-work-1b3d6ca514a
 - https://medium.com/swlh/the-power-of-saying-less-5bbf5ecf5e73

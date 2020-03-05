@@ -161,6 +161,19 @@ COLLECTIONS
      class Aquarium<T: WaterSupply>(val waterSupply: T)
 43. If really needed you can combine higher order functions with extensions and have an extension method inside function's parameters ;o
 44. SAM aka Single Abstract Method is an interface with one method. Very simple, think about Java interfaces like Runnble having run() and Callable having call()
+45. Interface Segregation Principle in Android : BottomSheetCallback has two methods: onSlide and onStateChanged. I need only onStateChanged. I can make an extension with interface callback as an argument val OnStateChangedListener for BottomSheetCallback. Inside extension method, I would run BottomSheetCallback with two methods, but use only onStateChanged. There I would use OnStateChangedListener and invoke it while leaving onSlide method empty. 
+Interface: interface OnStateChangedListener() {
+    fun onStateChanged()
+}
+Impl: BottomSheetBehavior.setupOnStateChangedListener(callback: OnStateChangedListener) {
+    BottomSheetCallback.() {
+        override onStateChanged(){
+            callback.onStateChanged()
+        }
+        override onSlide(){}
+    }
+}
+Usage: val listener = object : OnStateCHangedListener
 /*
  * <-----------------------------Kotlin Android Learnings----------------------------->
  */
@@ -210,6 +223,7 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
     @Test - Is a place where you write your test and to asserts
     @Throws(Exception::class) - Write this below @Test annotation to ensure you get a Exception
     @RunWith(AndroidJUnit4::class)
+    `My amazing unit test named with spaces` - basically an have functions with a verbose name
 10. Coroutines. Coroutines are the background tasks. They need three things: Scope, Dispatcher and Job. Usually scope is ui, but job is dispatched to IO thread pool.
     10.1 To create a coroutine. First create a Job, then a CoroutineScope(Dispatchers.Main + myJob). Then use scope to launch a coroutine and use withContext to define using IO context instead of blocking main UI thread.
 11. Transformations.map can be very useful when making button states. COmbined with data binding and view models few lines of code are required to define when button should be enabled or disabled. Have a viewmodel where you define transformed val buttonVisible values that goes like this:
@@ -242,48 +256,89 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
         - WorkRequest: Use WorkRequest to configure how and when to run the worker task. With the help of Constraints e.g. WiFi connected, device charging et cetera. There are two types of WorkRequests: 1) OneTimeWorkRequest: a task that will happen only once; 
         2) PeriodicWorkRequest: Work that can repeat at intervals (minimum interval = 15 min)
         - WorkManager: Schedules and runs WorkRequest. It spreads the load on system resources.
+19. Google Maps. Create MapsActivity through template projects, get API key and use the map. 
+    - SupportMapFragment is the map itself. In onCreate find it and use 
+    getMapAsync on the activity myMapFrag.getMapAsync(getActivity())
+    - map.addMarker(MarkerOptions().position(LatLng(55.0, 23.0).title("Lithuania")))
+    - You can add polygons, polylines, circles and ground overlay objects on the map. Also you can customize map style with Styling Wizard
+    - map.moveCamera(CameraUpdateFactory.newLatLng(LatLng(55.0, 23.0)))
+    - Zoom levels for Google Maps:
+        1: World; 5: Landmass/continent
+        10: City 15: Streets
+        20: Buildings
+    - Enabling My Location with My Location button 
+    if(isPermissionGranted()){
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+    } else {
+       ActivityCompat.requestPermissions(this,
+           arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+           REQUEST_LOCATION_PERMISSION)
+   }
 
+20. If I'd like to make a cardio app and track how many steps & distance a person has walked, I could use SensorManager & Sensor.TYPE_STEP_DETECTOR. 
+    20.1 To track steps. Simply create a listener, register/unregister it in act/frag. In onSensorChanged check if sensor.type == Sensor.TYPE_STEP_DETECTOR, then increase step count by one. 
+    20.2 To calculate distance. First get average step length of a person. If male, then mHeight * 0.415; If female, then fHeight * 0.413. Average for male is 78cm, for female 70cm
 /*
  * <-----------------------------LEARNING PLAN----------------------------->
  */
 
 + https://play.kotlinlang.org/byExample/01_introduction/01_Hello%20world
-- https://classroom.udacity.com/courses/ud9011
 + https://github.com/Zhuinden/guide-to-kotlin/wiki
 + https://medium.com/@renaudcerrato/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7
-- https://classroom.udacity.com/courses/ud9012
 + https://codelabs.developers.google.com/android-kotlin-fundamentals/
 + LocalBroadcastManager
 + https://developer.android.com/courses/kotlin-bootcamp/overview IMPROVE KOTLIN KNOWLEDGE EVEN MORE
 + https://codelabs.developers.google.com/codelabs/android-room-with-a-view-kotlin/#0
-7. https://codelabs.developers.google.com/codelabs/android-paging/#2
 + https://developer.android.com/jetpack/docs/guide
 + Kotlin SOLID https://blog.joshua-greenwood.com/the-solid-principles-and-kotlin/?utm_source=reddit&utm_medium=reddit&utm_campaign=the-solid-principles-and-kotlin
-11. Big tutorial with many things to learn https://www.baruckis.com/android/kriptofolio-app-series/
-12. Deepen Language Knowledge
++ Big tutorial with many things to learn https://www.baruckis.com/android/kriptofolio-app-series/
 + Lazy Property
-12.0 Null-Safety https://kotlinlang.org/docs/reference/null-safety.html
-12.1 Iterators
++ Null-Safety https://kotlinlang.org/docs/reference/null-safety.html
++ Iterators
 + Sealed Classes
-12.3 Objects + Companions https://antonioleiva.com/objects-kotlin/
-12.4 Lambdas https://kotlinlang.org/docs/reference/lambdas.html
-12.5 Delegates and Delegated Properties
-12.6 More about generics https://kotlinlang.org/docs/reference/generics.html
++ Objects + Companions https://antonioleiva.com/objects-kotlin/
++ Lambdas https://kotlinlang.org/docs/reference/lambdas.html
++ Delegates and Delegated Properties
+    + https://proandroiddev.com/kotlin-delegates-in-android-1ab0a715762d?source=friends_link&sk=222c722e33151eefed54401bb6248701
++ More about generics https://kotlinlang.org/docs/reference/generics.html
 12.10 Kotlin Coding Conventions and Tips
-13. Data Binding Documentation
-14. Google Maps (GPS)
-15. Blutooth Gatt
-18. Koin
-    18.1 https://medium.com/@gunayadem.dev/boost-your-android-apps-with-koin-and-coroutines-using-mvvm-in-kotlin-d30fe436ab4c
++ https://codelabs.developers.google.com/codelabs/constraint-layout/index.html#0
 + WorkManager
 - Coroutines
     - https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/composing-suspending-functions.md
     - https://codelabs.developers.google.com/codelabs/kotlin-coroutines/#0
     - https://medium.com/androiddevelopers/easy-coroutines-in-android-viewmodelscope-25bffb605471
-
++ Command Pattern
+- More about Coroutines
+    - https://kotlinlang.org/docs/reference/coroutines/shared-mutable-state-and-concurrency.html#actors
+    - https://codelabs.developers.google.com/codelabs/advanced-kotlin-coroutines/#0
+- Dagger2 Codelab https://codelabs.developers.google.com/codelabs/android-dagger/
+- Koin
+    - https://medium.com/@gunayadem.dev/boost-your-android-apps-with-koin-and-coroutines-using-mvvm-in-kotlin-d30fe436ab4c
++ ViewBinding https://developer.android.com/topic/libraries/view-binding#fragments
+- Android 11 Permission Review https://joebirch.co/2020/02/21/exploring-the-android-11-developer-preview-permission-changes/
+- Read more about MVVM architecture
+- Read more about Koin
+- Start doing Todo App Design
+- Start developing Todo App
+- https://codelabs.developers.google.com/codelabs/android-network-security-config/index.html
+- https://codelabs.developers.google.com/codelabs/android-paging/#2
+- https://kotlinlang.org/docs/reference/delegated-properties.html
 /*
-* <-----------------------------LEARNING MATERIAL SPLIT INTO SPECIFIC SUBJECTS----------------------------->
+* <-----------------------------LEARNING MATERIAL----------------------------->
 */
+
+<-----------DEPENDENCY INJECTION-------------->
++ https://www.techyourchance.com/dependency-injection-myths-debunked/
++ https://www.techyourchance.com/dependency-injection-android/
++ https://android.jlelse.eu/basics-of-dependency-injection-for-dummies-b844d642e174
+- https://blog.kotlin-academy.com/dependency-injection-the-pattern-without-the-framework-33cfa9d5f312
+- https://developer.android.com/training/dependency-injection
+- https://developer.android.com/training/dependency-injection/manual
+- https://android.jlelse.eu/practical-guide-to-dagger-76398948a2ea
+- https://proandroiddev.com/dagger-2-on-android-the-simple-way-f706a2c597e9
+- https://caster.io/courses/koin
 
 <-----------FIREBASE-------------->
 - In kotlin but the theory for extending livedata is the same https://medium.com/@lgvalle/firebase-viewmodels-livedata-cb64c5ee4f95
@@ -292,15 +347,45 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
 - RxJava + Kotlin https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
 
 <-----------ARCHITECTURE-------------->
-- MVVM FOR KOTLIN VERY GOOD https://resocoder.com/2018/09/07/mvvm-on-android-crash-course-kotlin-android-architecture-components/ 
+- MVVM Secrets https://android.jlelse.eu/exciting-secrets-about-mvvm-that-nobody-tells-you-a95548ea684b
+- https://proandroiddev.com/our-way-to-mvvmi-and-mistakes-we-made-when-implementing-mvvm-5f5448b5ad50
+- Android architecture 7 Parts http://www.digigene.com/architecture/android-architecture-part1/
+- Meaning of "architecture" and difference vs architectural pattern https://twitter.com/VasiliyZukanov/status/1206211507551375360
 - MVVM KOTLIN https://proandroiddev.com/android-architecture-starring-kotlin-coroutines-jetpack-mvvm-room-paging-retrofit-and-dagger-7749b2bae5f7
-- MVVM https://medium.com/@cdmunoz/offline-first-android-app-with-mvvm-dagger2-rxjava-livedata-and-room-25de4e1ada14
+- https://proandroiddev.com/android-architecture-d7405db1361c GOOD
 
 <-----------ARTICLES-------------->
 - Retrofit, Coroutines and Kotlin https://android.jlelse.eu/android-networking-in-2019-retrofit-with-kotlins-coroutines-aefe82c4d777
-- Kotlin Backend + GCloud With Android https://www.raywenderlich.com/4656683-build-an-api-with-kotlin-on-google-cloud-platform
+- Better Custom Views with Delegates https://blog.autsoft.hu/better-custom-views-with-delegates/
+
 <-----------USEFUL-------------->
-- WOrking with the Soft Keyboard https://guides.codepath.com/android/Working-with-the-Soft-Keyboard
++ USEFUL FOR NAVIGATION ARCH https://medium.com/google-developer-experts/using-navigation-architecture-component-in-a-large-banking-app-ac84936a42c2
++ Working with the Soft Keyboard https://guides.codepath.com/android/Working-with-the-Soft-Keyboard
++ Kotlin Style-guide and reference for common mistakes https://www.reddit.com/r/androiddev/comments/77sl1c/devs_who_review_kotlin_regularly_what_are_things/dorsk3i/
++ XML Convention https://jeroenmols.com/blog/2016/03/07/resourcenaming/
 - Kotlin Design Patterns https://github.com/dbacinski/Design-Patterns-In-Kotlin
-- From Java to Kotlin Cheat Sheet https://fabiomsr.github.io/from-java-to-kotlin/
-- Kotlin Style-guide and reference for common mistakes https://www.reddit.com/r/androiddev/comments/77sl1c/devs_who_review_kotlin_regularly_what_are_things/dorsk3i/
+- VectorDrawable Animating https://www.androiddesignpatterns.com/2016/11/introduction-to-icon-animation-techniques.html
+- Kotlin Language Cheat Sheet https://blog.kotlin-academy.com/kotlin-cheat-sheet-1137588c75a
+- Kotlin Data Science Resources https://github.com/thomasnield/kotlin-data-science-resources/blob/master/README.md
+
+
+<-----------LIBRARIES-------------->
+- Kotlin Statistics https://towardsdatascience.com/introduction-to-kotlin-statistics-cdad3be88b5
+
+<-----------PODCAST-------------->
+- Android Backstage Podcast https://androidbackstage.blogspot.com/?m=1
+
+<-----------BLOGS-------------->
+- https://www.techyourchance.com/
+
+<-----------OTHER-------------->
+- Generative Art with Python https://www.generativehut.com/post/robots-and-generative-art-and-python-oh-my
+- Blog about Music, Math and Computers https://derivativedribble.wordpress.com
+- How to research https://www.reddit.com/r/GetStudying/comments/cy85pg/how_to_effectively_research_for_an_academic_essay/
+
+<-----------PSYCHOLOGY--------->
+- https://en.wikipedia.org/wiki/Cognitive_bias
+- https://en.wikipedia.org/wiki/Metacognition
+
+TOOLS 
+- shapeshifter.design

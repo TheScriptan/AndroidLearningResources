@@ -313,7 +313,7 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
 - More about Coroutines
     - https://kotlinlang.org/docs/reference/coroutines/shared-mutable-state-and-concurrency.html#actors
     - https://codelabs.developers.google.com/codelabs/advanced-kotlin-coroutines/#0
-- Dagger2 Codelab https://codelabs.developers.google.com/codelabs/android-dagger/
++ Dagger2 Codelab https://codelabs.developers.google.com/codelabs/android-dagger/
 - Koin
     - https://medium.com/@gunayadem.dev/boost-your-android-apps-with-koin-and-coroutines-using-mvvm-in-kotlin-d30fe436ab4c
 + ViewBinding https://developer.android.com/topic/libraries/view-binding#fragments
@@ -325,6 +325,7 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
 - https://codelabs.developers.google.com/codelabs/android-network-security-config/index.html
 - https://codelabs.developers.google.com/codelabs/android-paging/#2
 - https://kotlinlang.org/docs/reference/delegated-properties.html
+- Color Theory
 /*
 * <-----------------------------LEARNING MATERIAL----------------------------->
 */
@@ -333,11 +334,14 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
 + https://www.techyourchance.com/dependency-injection-myths-debunked/
 + https://www.techyourchance.com/dependency-injection-android/
 + https://android.jlelse.eu/basics-of-dependency-injection-for-dummies-b844d642e174
-- https://blog.kotlin-academy.com/dependency-injection-the-pattern-without-the-framework-33cfa9d5f312
-- https://developer.android.com/training/dependency-injection
-- https://developer.android.com/training/dependency-injection/manual
++ https://blog.kotlin-academy.com/dependency-injection-the-pattern-without-the-framework-33cfa9d5f312
++ https://developer.android.com/training/dependency-injection
++ https://developer.android.com/training/dependency-injection/manual
+- https://dagger.dev/tutorial/
+- https://developer.android.com/training/dependency-injection/dagger-android
 - https://android.jlelse.eu/practical-guide-to-dagger-76398948a2ea
 - https://proandroiddev.com/dagger-2-on-android-the-simple-way-f706a2c597e9
++ https://arunkumar.dev/introducing-scabbard-a-tool-to-visualize-dagger-2-dependency-graphs/
 - https://caster.io/courses/koin
 
 <-----------FIREBASE-------------->
@@ -357,6 +361,8 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
 <-----------ARTICLES-------------->
 - Retrofit, Coroutines and Kotlin https://android.jlelse.eu/android-networking-in-2019-retrofit-with-kotlins-coroutines-aefe82c4d777
 - Better Custom Views with Delegates https://blog.autsoft.hu/better-custom-views-with-delegates/
+- Type Safe Builders with Builder Pattern https://jimbaca.com/creating-type-safe-builders-kotlin/
+- Kotlin Type Hierarchy http://www.natpryce.com/articles/000818.html
 
 <-----------USEFUL-------------->
 + USEFUL FOR NAVIGATION ARCH https://medium.com/google-developer-experts/using-navigation-architecture-component-in-a-large-banking-app-ac84936a42c2
@@ -364,9 +370,9 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
 + Kotlin Style-guide and reference for common mistakes https://www.reddit.com/r/androiddev/comments/77sl1c/devs_who_review_kotlin_regularly_what_are_things/dorsk3i/
 + XML Convention https://jeroenmols.com/blog/2016/03/07/resourcenaming/
 - Kotlin Design Patterns https://github.com/dbacinski/Design-Patterns-In-Kotlin
-- VectorDrawable Animating https://www.androiddesignpatterns.com/2016/11/introduction-to-icon-animation-techniques.html
 - Kotlin Language Cheat Sheet https://blog.kotlin-academy.com/kotlin-cheat-sheet-1137588c75a
 - Kotlin Data Science Resources https://github.com/thomasnield/kotlin-data-science-resources/blob/master/README.md
+- https://medium.com/androiddevelopers/migrating-to-material-components-for-android-ec6757795351
 
 
 <-----------LIBRARIES-------------->
@@ -379,13 +385,7 @@ https://stackoverflow.com/questions/50577356/android-jetpack-navigation-bottomna
 - https://www.techyourchance.com/
 
 <-----------OTHER-------------->
-- Generative Art with Python https://www.generativehut.com/post/robots-and-generative-art-and-python-oh-my
-- Blog about Music, Math and Computers https://derivativedribble.wordpress.com
 - How to research https://www.reddit.com/r/GetStudying/comments/cy85pg/how_to_effectively_research_for_an_academic_essay/
 
-<-----------PSYCHOLOGY--------->
-- https://en.wikipedia.org/wiki/Cognitive_bias
-- https://en.wikipedia.org/wiki/Metacognition
-
-TOOLS 
+<-----------TOOLS-------------->
 - shapeshifter.design

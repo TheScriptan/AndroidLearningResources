@@ -378,14 +378,14 @@ SOFTWARE ENGINEERING THEORY
 + https://en.wikipedia.org/wiki/Connascence
 + https://en.wikipedia.org/wiki/Law_of_Demeter
 + https://en.wikipedia.org/wiki/Modular_programming
-- https://en.wikipedia.org/wiki/Behavioral_pattern
-- https://en.wikipedia.org/wiki/Concurrency_pattern
-- https://en.wikipedia.org/wiki/Structural_pattern
-- https://en.wikipedia.org/wiki/Object_composition
++ https://en.wikipedia.org/wiki/Behavioral_pattern
++ https://en.wikipedia.org/wiki/Concurrency_pattern
++ https://en.wikipedia.org/wiki/Structural_pattern
++ https://en.wikipedia.org/wiki/Object_composition
 - https://en.wikipedia.org/wiki/Object-oriented_design
 - https://en.wikipedia.org/wiki/Structured_analysis#Structured_Design
-- Builder Pattern
-	- https://www.thedroidsonroids.com/blog/design-patterns-in-android-builder
++ Builder Pattern
+	+ https://www.thedroidsonroids.com/blog/design-patterns-in-android-builder
 - https://en.wikipedia.org/wiki/Interface-based_programming
 - SOLID Principles https://scotch.io/bar-talk/s-o-l-i-d-the-first-five-principles-of-object-oriented-design#toc-single-responsibility-principle
 - DRY Code
@@ -454,8 +454,6 @@ videos
 <----------------DEPENDENCY INJECTION---------------------->
 
 - STARTING POINT
-	- https://www.youtube.com/watch?v=ZZ_qek0hGkM&list=PLrnPJCHvNZuA2ioi4soDZKz8euUQnJW65
-	- https://www.youtube.com/watch?v=3qZh6Fyrz-k&list=PLgCYzUzKIBE8AOAspC3DHoBNZIBHbIOsC
 	- https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb
 	- http://www.digigene.com/design-patterns/dependency-injection-coffeeshop/
 	- https://medium.com/@Zhuinden/that-missing-guide-how-to-use-dagger2-ef116fbea97
@@ -519,7 +517,6 @@ BEST PRACTICES
 - Android Performance Patterns https://www.youtube.com/playlist?list=PLWz5rJ2EKKc9CBxr3BVjPTPoDPLdPIFCE
 
 SOFTWARE RELATED ARTICLES TO READ
-- https://android.jlelse.eu/building-a-shazam-clone-part-1-building-android-apps-series-179c2580a094
 + https://medium.com/@lewisdgavin/building-a-cardio-tracking-app-for-android-1f33935f924d
 + https://blog.aritraroy.in/what-my-2-years-of-android-development-have-taught-me-the-hard-way-52b495ba5c51
 + https://medium.com/s/story/notes-to-myself-on-software-engineering-c890f16f4e4d
@@ -540,11 +537,12 @@ SOFTWARE RELATED ARTICLES TO READ
 + https://hackernoon.com/top-12-things-that-destroy-developer-productivity-2ddf0abc190
 + https://medium.com/better-programming/the-marks-of-a-true-senior-developer-d5f3b11c3375
 + https://medium.com/better-programming/top-signs-of-an-over-experienced-programmer-22bbe0b57663
-- https://medium.com/swlh/how-to-write-good-code-under-pressure-5f795ec7f6ec
-- https://towardsdatascience.com/10-common-software-architectural-patterns-in-a-nutshell-a0b47a1e9013
++ https://medium.com/swlh/how-to-write-good-code-under-pressure-5f795ec7f6ec
++ https://towardsdatascience.com/10-common-software-architectural-patterns-in-a-nutshell-a0b47a1e9013
 - https://slack.engineering/client-consistency-at-slack-beyond-libslack-c9cfbe778fb7
 - https://medium.com/free-code-camp/how-code-reviews-work-at-microsoft-4ebdea0cd0c0
 - https://codeburst.io/software-architecture-the-difference-between-architecture-and-design-7936abdd5830
+- https://android.jlelse.eu/building-a-shazam-clone-part-1-building-android-apps-series-179c2580a094
 
 NON-SOFTWARE RELATED ARTICLES TO READ
 + https://medium.com/s/youthnow/what-its-like-to-be-90-something-368780082573
@@ -596,11 +594,10 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 + https://medium.com/@jproco/three-stories-every-entrepreneur-should-know-3476909629bb
 + https://medium.com/s/thenewnew/the-millennial-obsession-with-starting-over-60308e07861e
 + https://medium.com/@ngoeke/how-to-change-your-life-in-just-10-minutes-per-day-9f02e716977f
-- https://medium.com/better-humans/the-50-30-10-10-rule-for-how-to-wake-up-earlier-and-work-on-your-dream-66d63b34554d 
-- https://medium.com/swlh/the-power-of-doing-nothing-at-all-73eeea488b8b
-- https://medium.com/scientific-american/proper-breathing-brings-better-health-690a57b22d35
-- https://elemental.medium.com/marie-kondos-daily-routine-is-delightful-5f3161c466f1
-- https://elemental.medium.com/why-your-brain-needs-idle-time-e5d90b0ef1df
++ https://medium.com/better-humans/the-50-30-10-10-rule-for-how-to-wake-up-earlier-and-work-on-your-dream-66d63b34554d 
++ https://medium.com/swlh/the-power-of-doing-nothing-at-all-73eeea488b8b
++ https://elemental.medium.com/marie-kondos-daily-routine-is-delightful-5f3161c466f1
++ https://elemental.medium.com/why-your-brain-needs-idle-time-e5d90b0ef1df
 - https://medium.com/s/story/how-to-be-polite-9bf1e69e888c
 - https://onezero.medium.com/welcome-to-the-reliance-economy-3daab396ce4c
 - https://humanparts.medium.com/how-to-listen-to-your-anger-3ce09facbe65
@@ -660,3 +657,4 @@ NON-SOFTWARE RELATED ARTICLES TO READ
 - https://medium.com/better-humans/how-to-do-a-life-changing-accountability-partnership-in-less-than-2-minutes-a-day-41142d80c44d
 - https://medium.com/mind-cafe/how-to-radically-improve-your-life-61389cdb0f50
 - https://betterhumans.coach.me/cognitive-journaling-a-systematic-method-to-overcome-negative-beliefs-119be459842c
+- https://medium.com/better-humans/how-to-focus-while-working-from-home-9a98a6426c6f
